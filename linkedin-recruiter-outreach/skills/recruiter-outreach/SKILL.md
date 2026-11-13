@@ -26,7 +26,7 @@ Ask the user to log into Sales Navigator in the browser tool (**never** ask for 
 Open A-tier lead pages one at a time (paced), capture role scope, recent posts, mutual connections and past employers, and rate fit 🟢/🟡/🔴. Many "technical recruiters" hire for hardware, Staff+ only, GTM, or university roles. Catching that saves credits.
 
 ## Stage 4: `inmail-drafts`
-Draft messages for 🟢 recruiters, type them into Sales Navigator composers in **separate tabs**, and leave them **unsent**. Report which tabs hold which drafts.
+Draft messages for 🟢 recruiters and leave them **unsent**. Sales Navigator has no drafts folder, so a draft lives only in an open composer tab. For up to ~7 drafts, type them into separate tabs; for more, build the launcher page (`scripts/build_launcher.py`) so the user can open and fill any number of tabs in their own browser with a bookmarklet. Report which tabs hold which drafts and which are free (Open Profile).
 
 ## Credit plan to suggest
 - 🟢 first. 🟡 after hand-tuning. Spend a few credits on 🔴 recruiters only as "who should I talk to?" notes, preferring ones with many mutual connections.

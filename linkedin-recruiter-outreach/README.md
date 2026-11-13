@@ -36,12 +36,12 @@ The orchestrator skill (`recruiter-outreach`) walks through four stage skills:
 | 1 | `candidate-profile` | `candidate-profile.md` |
 | 2 | `recruiter-search` | `recruiters.csv` |
 | 3 | `recruiter-enrich` | `enriched.md` + fit column in CSV |
-| 4 | `inmail-drafts` | drafts open in Sales Navigator tabs + `drafts.md` |
+| 4 | `inmail-drafts` | drafts open in Sales Navigator tabs + `drafts.md` + `inmail-launcher.html` |
 
 You can also run any stage on its own ("enrich the A-tier", "draft 5 more").
 
 ## Ground rules baked into the skills
-- **Never sends anything.** Claude types drafts; you send them.
+- **Never sends anything.** Claude types drafts; you send them. Sales Navigator has no drafts folder, so drafts live in open tabs; the launcher page lets you open and fill as many as you like in your own browser.
 - **Never claims anything that isn't in the candidate profile.** In the original run, the first drafts claimed "observability ownership" that wasn't on the resume. The profile step exists to stop that.
 - **Paces itself.** Every profile Claude opens shows up as "X viewed your profile", and LinkedIn runs bot detection. The skills enrich in batches of about 30, with pauses.
 - **Lists data only to the user.** Recruiter data stays in local files; don't publish it.
@@ -61,6 +61,7 @@ scripts/
   extract-search-results.js      paste into the search page (one company at a time)
   extract-lead.js                paste into a lead page
   fill-inmail.js                 fills subject/body in the open InMail composer
+  build_launcher.py              drafts.md + recruiters.csv → launcher page with a fill-InMail bookmarklet
   build_list.py                  dedupe, filter, tier, guess emails → recruiters.csv
 templates/
   candidate-profile.md

@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""Build a local InMail launcher page from drafts.md + recruiters.csv.
+
+The page lets the user stage any number of drafts in their OWN browser:
+  - "Open all leads" opens each recruiter's Sales Navigator lead page in a tab
+  - a "Fill InMail" bookmarklet (drag to bookmarks bar) opens the composer on the
+    current lead page and types that recruiter's subject + body. It never sends.
+  - per-row "Copy subject" / "Copy body" buttons as a manual fallback
+
+Why: Sales Navigator has no InMail drafts folder (a closed composer is lost), and
+agent-controlled browsers cap open tabs (T3 preview: ~8). This removes both limits.
+
+drafts.md format (as written by the inmail-drafts skill):
+    ### 3. Parisa Derogari: NVIDIA, ...        <- name is the text before ":"
+    **Subject:** Pricing-systems engineer ...
+    Hi Parisa,
+    ...
+    Best,
+Sections whose heading contains "SENT" are skipped.
+
+recruiters.csv needs `name` and `url` columns (build_list.py output).
+
+Usage:
+    python3 build_launcher.py outreach/drafts.md outreach/recruiters.csv outreach/inmail-launcher.html \
+        [--staged "Shari Fox,Wil Price"]   # names already open as drafts elsewhere (shown faded)
+"""
+import argparse
+import csv
+import html
+import json
+import re
+import sys
+import urllib.parse
+
+FILL_JS = r"""(async()=>{const D=__DATA__;const k=Object.keys(D).find(k=>location.href.includes(k));if(!k){alert('No draft for this page. Open a recruiter lead page first.');return}const [S,B]=D[k];const sl=m=>new Promise(r=>setTimeout(r,m));const bs=()=>[...document.querySelectorAll('button')];for(let i=0;i<15&&!document.querySelector('textarea');i++){if(/disabled all communications/i.test(document.body.innerText)){alert('This recruiter has disabled messages.');return}const b=bs().find(b=>b.innerText.trim()==='Message');if(b&&i%4===0)b.click();await sl(1000)}const s=[...document.querySelectorAll('input')].find(i=>/Subject/i.test(i.placeholder||''));const t=document.querySelector('textarea');if(!s||!t){alert('Composer not found. Click Message, then click the bookmark again.');return}s.focus();s.select();document.execCommand('insertText',false,S);t.focus();t.select();document.execCommand('insertText',false,B);t.setSelectionRange(0,0);t.scrollTop=0})()"""
+
+
+def parse_drafts(text):
+    out = []
+    for sec in re.split(r"\n### ", text)[1:]:
+        heading = sec.split("\n", 1)[0]
+        if "SENT" in heading:
+            continue
+        m = re.match(r"(?:\d+\.\s*)?([^:]+):", heading)
+        subj = re.search(r"\*\*Subject:\*\*\s*(.+)", sec)
+        if not (m and subj and "Hi " in sec and "Best," in sec):
+            continue
+        body = sec[sec.index("Hi "):sec.index("Best,") + len("Best,")]
+        out.append({"name": m.group(1).strip(), "subject": subj.group(1).strip(), "body": body})
+    return out
+
+
+def lead_urls(csv_path):
+    urls = {}
+    with open(csv_path, newline="") as f:
+        for row in csv.DictReader(f):
+            url = row.get("url", "")
+            if "/sales/lead/" in url:
+                urls[row["name"].strip().rstrip(".").lower()] = url
+    return urls
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("drafts")
+    ap.add_argument("recruiters_csv")
+    ap.add_argument("out_html")
+    ap.add_argument("--staged", default="", help="comma-separated names already open as drafts")
+    a = ap.parse_args()
+
+    drafts = parse_drafts(open(a.drafts).read())
+    urls = lead_urls(a.recruiters_csv)
+    staged = {s.strip().lower() for s in a.staged.split(",") if s.strip()}
+    rows, missing = [], []
+    for d in drafts:
+        url = urls.get(d["name"].rstrip(".").lower())
+        if not url:
+            missing.append(d["name"])
+            continue
+        d["url"] = url
+        d["id"] = url.split("/sales/lead/")[1].split(",")[0].split("?")[0]
+        d["staged"] = d["name"].lower() in staged
+        rows.append(d)
+
+    js = FILL_JS.replace("__DATA__", json.dumps({r["id"]: [r["subject"], r["body"]] for r in rows}))
+    bookmarklet = "javascript:" + urllib.parse.quote(js, safe="(){}[];:,'=>!&|.?/+*")
+    assert urllib.parse.unquote(bookmarklet[len("javascript:"):]) == js
+
+    e = html.escape
+    trs = "".join(
+        f'<tr class="{"staged" if r["staged"] else ""}"><td><b>{e(r["name"])}</b>'
+        + (" <span class=tag>already open elsewhere</span>" if r["staged"] else "")
+        + f'<div class=subj>{e(r["subject"])}</div></td>'
+        f'<td><a class=btn href="{e(r["url"])}" target="_blank" rel="noopener">Open lead</a></td>'
+        f'<td><button data-t="{e(r["subject"])}">Copy subject</button> '
+        f'<button data-t="{e(r["body"])}">Copy body</button></td></tr>'
+        for r in rows
+    )
+    new = sum(not r["staged"] for r in rows)
+    page = f"""<!doctype html><meta charset=utf-8><title>InMail launcher</title>
+<style>body{{font:14px system-ui;max-width:960px;margin:32px auto;padding:0 16px;color:#1d2226}}h1{{font-size:22px}}table{{width:100%;border-collapse:collapse}}td{{padding:10px 8px;border-bottom:1px solid #e5e5e5;vertical-align:top}}.subj{{color:#666;font-size:13px;margin-top:3px}}.btn,button{{display:inline-block;padding:6px 12px;border-radius:16px;border:1px solid #0a66c2;color:#0a66c2;background:#fff;text-decoration:none;cursor:pointer;font:inherit;white-space:nowrap}}.bm{{display:inline-block;padding:10px 18px;background:#0a66c2;color:#fff;border-radius:20px;text-decoration:none;font-weight:600}}.staged{{opacity:.55}}.tag{{font-size:11px;background:#eef3f8;padding:2px 6px;border-radius:8px;margin-left:6px}}ol li{{margin:6px 0}}.note{{background:#fff8e6;padding:10px 14px;border-radius:8px}}</style>
+<h1>InMail launcher: {len(rows)} unsent drafts</h1>
+<ol>
+<li>Drag this button to your bookmarks bar: <a class=bm href="{e(bookmarklet)}">Fill InMail</a></li>
+<li>Click <b>Open all leads</b>. If the browser blocks pop-ups, allow them for this file and click again.</li>
+<li>In each tab, click the <b>Fill InMail</b> bookmark. It opens the composer and types that recruiter's subject and body.</li>
+<li>Review, then click <b>Send</b> yourself. Nothing is ever sent automatically.</li>
+</ol>
+<p class=note>Keep tabs open until you send: Sales Navigator has no InMail drafts folder, so a closed composer is lost. Click the bookmark again to refill a tab.</p>
+<p><button id=all>Open all leads ({new} new)</button> <label><input type=checkbox id=inc> include faded rows</label></p>
+<table>{trs}</table>
+<script>
+document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=async()=>{{await navigator.clipboard.writeText(b.dataset.t);const o=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=o,1200)}});
+document.getElementById('all').onclick=()=>{{const inc=document.getElementById('inc').checked;document.querySelectorAll('tr').forEach(tr=>{{if(!inc&&tr.classList.contains('staged'))return;window.open(tr.querySelector('a').href,'_blank')}})}};
+</script>"""
+    open(a.out_html, "w").write(page)
+    print(f"{len(rows)} drafts -> {a.out_html}")
+    if missing:
+        print("No lead URL in CSV for: " + ", ".join(missing), file=sys.stderr)
+
+
+if __name__ == "__main__":
+    main()

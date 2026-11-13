@@ -1,6 +1,6 @@
 ---
 name: inmail-drafts
-description: Write personalized recruiter InMails grounded in the candidate's verified profile and each recruiter's enrichment, then type them into LinkedIn Sales Navigator composers in separate tabs WITHOUT sending. Use when the user wants outreach messages drafted or staged for review.
+description: Write personalized recruiter InMails grounded in the candidate's verified profile and each recruiter's enrichment, then stage them in LinkedIn Sales Navigator composers WITHOUT sending, either typed into browser tabs or via a launcher page + fill bookmarklet in the user's own browser. Use when the user wants outreach messages drafted or staged for review.
 ---
 
 # InMail drafts
@@ -16,17 +16,44 @@ description: Write personalized recruiter InMails grounded in the candidate's ve
 - **Don't claim a location** the profile doesn't show (e.g. "I'm local").
 - **End with "Best,"** because Sales Navigator appends the user's signature automatically, so "Best, Name" would sign twice.
 
-Template: `<plugin root>/templates/inmail.md`. Also save all drafts to `outreach/drafts.md`.
+Template: `<plugin root>/templates/inmail.md`. Save all drafts to `outreach/drafts.md` in the format below (the launcher parses it):
 
-## Typing drafts into Sales Navigator (unsent)
-1. Open each recruiter's lead page in a **new tab** (one tab per draft; navigating away loses the draft).
-2. Click the **Message** button (button whose text is exactly `Message`). Wait ~3 s; retry once if the composer isn't there.
-3. If the composer says *"the recipient has disabled all communications"*, close the tab, tell the user, and use the next recruiter.
-4. Run `<plugin root>/scripts/fill-inmail.js` with the subject and body. It uses `document.execCommand('insertText')` on the Subject input and the `textarea`. Typing long text keystroke by keystroke timed out; setting `.value` directly isn't picked up by the app.
-5. Confirm that `Send` is enabled and the composer shows "Use 1 of N credits". **Never click Send.**
-6. Tell the user which tab holds which draft, and remind them each send costs one credit.
+```
+### 3. Parisa Derogari: NVIDIA, AI talent for Software Engineering
+**Subject:** Pricing-systems engineer interested in NVIDIA
+
+Hi Parisa,
+...
+Best,
+```
+
+When the user says they sent one, append ` ✅ SENT <date>` to its `###` heading so it's excluded from the launcher and nobody gets messaged twice.
+
+## Before staging: check for duplicates
+Open the Sales Navigator inbox and check that none of the recipients already have a thread (earlier outreach may have used a different template). Report the credits balance shown there ("InMail credits: N left").
+
+## Facts about Sales Navigator that shape the flow
+- **There is no InMail drafts folder.** A draft exists only while its composer is open; closing or navigating the tab loses it. Tell the user this up front: *the open tabs are the drafts.*
+- **Agent-controlled browsers cap open tabs** (T3 Code preview: about 8). For more drafts than that, use the launcher (option B) or stage in batches.
+- **"Free to Open Profile"** in the composer header means the InMail costs no credit. "Use 1 of N credits" means one credit. Neither visible → assume 1 credit. Report the cost per tab.
+- Freshly opened lead pages sometimes render blank or show the Message button late. Wait for it; if the body is empty, reload the tab and retry.
+
+## Staging, option A: type into tabs (agent browser)
+Use when there are ≤ ~7 drafts or the user wants them staged right now.
+1. Open each recruiter's lead page in a **new tab** (one tab per draft).
+2. Run `<plugin root>/scripts/fill-inmail.js` with the subject and body (build them with `JSON.stringify`). It waits for the **Message** button, opens the composer, fills both fields with `document.execCommand('insertText')` (typing keystroke by keystroke timed out; setting `.value` isn't picked up by the app), and returns `{subjectOK, bodyOK, sendEnabled, cost}`.
+3. If it returns BLOCKED (*"recipient has disabled all communications"*), close the tab, tell the user, and use the next recruiter.
+4. **Never click Send.**
+5. Tell the user which tab holds which draft and its cost. Never close or reload a tab holding an unsent draft unless the user says so.
+
+## Staging, option B: launcher page (user's own browser), the default for larger batches
+Use when there are more drafts than the tab cap, or the user wants to review and send at their own pace in their normal browser.
+1. `python3 <plugin root>/scripts/build_launcher.py outreach/drafts.md outreach/recruiters.csv outreach/inmail-launcher.html [--staged "Name,Name"]`. `--staged` fades rows already open as drafts in the agent browser.
+2. Open the HTML file in the user's browser (macOS: `open -a "Google Chrome" <file>`).
+3. Tell the user: drag **Fill InMail** to the bookmarks bar → click **Open all leads** (allow pop-ups) → click the bookmark in each tab → review → Send themselves. "Copy subject/body" buttons are the manual fallback.
+4. If drafts change, rebuild the launcher; the user must re-drag the bookmark (it embeds the drafts).
 
 ## When the profile changes
-If the user corrects a fact, re-fill every open draft. Select all + `insertText` replaces the content cleanly.
+If the user corrects a fact, update `drafts.md`, re-fill every open draft (select all + `insertText` replaces cleanly), and rebuild the launcher.
 
 > `<plugin root>` = the `linkedin-recruiter-outreach` folder two levels above this SKILL.md (resolve symlinks).
