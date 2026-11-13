@@ -16,7 +16,7 @@ drafts.md format (as written by the inmail-drafts skill):
     Hi Parisa,
     ...
     Best,
-Sections whose heading contains "SENT" are skipped.
+Sections whose heading contains "SENT" or "(email" are skipped.
 
 recruiters.csv needs `name` and `url` columns (build_list.py output).
 
@@ -39,7 +39,7 @@ def parse_drafts(text):
     out = []
     for sec in re.split(r"\n### ", text)[1:]:
         heading = sec.split("\n", 1)[0]
-        if "SENT" in heading:
+        if "SENT" in heading or "(email" in heading:  # sent, or an email draft (not an InMail)
             continue
         m = re.match(r"(?:\d+\.\s*)?([^:]+):", heading)
         subj = re.search(r"\*\*Subject:\*\*\s*(.+)", sec)
