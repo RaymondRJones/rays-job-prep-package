@@ -45,8 +45,11 @@ def parse_drafts(text):
         subj = re.search(r"\*\*Subject:\*\*\s*(.+)", sec)
         if not (m and subj and "Hi " in sec and "Best," in sec):
             continue
-        body = sec[sec.index("Hi "):sec.index("Best,") + len("Best,")]
-        out.append({"name": m.group(1).strip(), "subject": subj.group(1).strip(), "body": body})
+        body = sec[sec.index("\nHi ") + 1:sec.index("Best,") + len("Best,")]
+        prof = re.search(r"\*\*Profile:\*\*\s*(\S+)", sec)
+        note = re.search(r"\*\*Note:\*\*\s*(.+)", sec)
+        out.append({"name": m.group(1).strip(), "subject": subj.group(1).strip(), "body": body,
+                    "profile": prof.group(1) if prof else "", "note": note.group(1).strip() if note else ""})
     return out
 
 
@@ -63,22 +66,22 @@ def lead_urls(csv_path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("drafts")
-    ap.add_argument("recruiters_csv")
+    ap.add_argument("recruiters_csv", help="CSV with name,url columns; use '-' if every draft has a **Profile:** line")
     ap.add_argument("out_html")
     ap.add_argument("--staged", default="", help="comma-separated names already open as drafts")
     a = ap.parse_args()
 
     drafts = parse_drafts(open(a.drafts).read())
-    urls = lead_urls(a.recruiters_csv)
+    urls = lead_urls(a.recruiters_csv) if a.recruiters_csv != "-" else {}
     staged = {s.strip().lower() for s in a.staged.split(",") if s.strip()}
     rows, missing = [], []
     for d in drafts:
-        url = urls.get(d["name"].rstrip(".").lower())
+        url = d["profile"] or urls.get(d["name"].rstrip(".").lower())
         if not url:
             missing.append(d["name"])
             continue
         d["url"] = url
-        d["id"] = url.split("/sales/lead/")[1].split(",")[0].split("?")[0]
+        d["id"] = (url.split("/sales/lead/")[1] if "/sales/lead/" in url else url.rstrip("/").split("/")[-1]).split(",")[0].split("?")[0]
         d["staged"] = d["name"].lower() in staged
         rows.append(d)
 
@@ -93,12 +96,18 @@ def main():
         + f'<div class=subj>{e(r["subject"])}</div></td>'
         f'<td><a class=btn href="{e(r["url"])}" target="_blank" rel="noopener">Open lead</a></td>'
         f'<td><button data-k=subject data-t="{e(r["subject"])}">Copy subject</button> '
-        f'<button data-k=body data-t="{e(r["body"])}">Copy body</button></td>'
-        '<td class=prog><span data-s=opened>Opened</span><span data-s=subject>Subject</span><span data-s=body>Body</span>'
+        f'<button data-k=body data-t="{e(r["body"])}">Copy body</button>'
+        + (f' <button data-k=note data-t="{e(r["note"])}">Copy note</button>' if r["note"] else "")
+        + '</td><td class=prog><span data-s=opened>Opened</span>'
+        + ('<span data-s=note>Note</span>' if r["note"] else "")
+        + '<span data-s=subject>Subject</span><span data-s=body>Body</span>'
         '<label class=sent><input type=checkbox data-s=sent> Sent</label></td></tr>'
         for r in rows
     )
     new = sum(not r["staged"] for r in rows)
+    founder_help = ('<p class=note><b>Rows with "Copy note":</b> open the profile → <b>Connect</b> → <b>Add a note</b> → paste the note → Send. '
+                    'If they haven\'t accepted after about a week, send the InMail (subject + body) instead. '
+                    'The Fill InMail bookmark only works on Sales Navigator lead pages.</p>') if any(r["note"] for r in rows) else ""
     page = f"""<!doctype html><meta charset=utf-8><title>InMail launcher</title>
 <style>body{{font:14px system-ui;max-width:960px;margin:32px auto;padding:0 16px;color:#1d2226}}h1{{font-size:22px}}table{{width:100%;border-collapse:collapse}}td{{padding:10px 8px;border-bottom:1px solid #e5e5e5;vertical-align:top}}.subj{{color:#666;font-size:13px;margin-top:3px}}.btn,button{{display:inline-block;padding:6px 12px;border-radius:16px;border:1px solid #0a66c2;color:#0a66c2;background:#fff;text-decoration:none;cursor:pointer;font:inherit;white-space:nowrap}}.bm{{display:inline-block;padding:10px 18px;background:#0a66c2;color:#fff;border-radius:20px;text-decoration:none;font-weight:600}}.staged{{opacity:.55}}.tag{{font-size:11px;background:#eef3f8;padding:2px 6px;border-radius:8px;margin-left:6px}}ol li{{margin:6px 0}}.note{{background:#fff8e6;padding:10px 14px;border-radius:8px}}.prog{{white-space:nowrap}}.prog span{{display:inline-block;font-size:12px;color:#999;border:1px solid #ddd;border-radius:10px;padding:2px 7px;margin-right:4px}}.prog span.on{{color:#1a7f37;border-color:#1a7f37;background:#e7f3ea}}.prog span.on::before{{content:'✓ '}}.sent{{font-weight:600;margin-left:4px;cursor:pointer}}tr.inprog td{{background:#fffbe6}}tr.done td{{background:#eef7f0}}tr.done b{{text-decoration:line-through;color:#666}}#progress{{font-weight:600;margin-left:12px}}</style>
 <h1>InMail launcher: {len(rows)} unsent drafts</h1>
@@ -109,7 +118,7 @@ def main():
 <li>Review, then click <b>Send</b> yourself. Nothing is ever sent automatically.</li>
 </ol>
 <p class=note>Keep tabs open until you send: Sales Navigator has no InMail drafts folder, so a closed composer is lost. Click the bookmark again to refill a tab.</p>
-<p><button id=all>Open all leads ({new} new)</button> <label><input type=checkbox id=inc> include faded rows</label><span id=progress></span> <button id=reset style="float:right;border-color:#999;color:#666">Reset checklist</button></p>
+{founder_help}<p><button id=all>Open all leads ({new} new)</button> <label><input type=checkbox id=inc> include faded rows</label><span id=progress></span> <button id=reset style="float:right;border-color:#999;color:#666">Reset checklist</button></p>
 <table>{trs}</table>
 <script>
 function legacyCopy(s){{const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();let ok=false;try{{ok=document.execCommand('copy')}}catch(e){{}}ta.remove();return ok}}
@@ -117,8 +126,8 @@ async function copyText(s){{try{{await navigator.clipboard.writeText(s);return t
 const KEY='inmail-progress';const st=JSON.parse(localStorage.getItem(KEY)||'{{}}');
 function save(){{localStorage.setItem(KEY,JSON.stringify(st))}}
 function mark(tr,k,v=true){{const id=tr.dataset.id;(st[id]=st[id]||{{}})[k]=v;save();render(tr)}}
-function render(tr){{const s=st[tr.dataset.id]||{{}};tr.querySelectorAll('span[data-s]').forEach(x=>x.classList.toggle('on',!!s[x.dataset.s]));tr.querySelector('input[data-s=sent]').checked=!!s.sent;tr.classList.toggle('done',!!s.sent);tr.classList.toggle('inprog',!s.sent&&!!(s.opened||s.subject||s.body));renderTotal()}}
-function renderTotal(){{const trs=[...document.querySelectorAll('tr[data-id]')];const sent=trs.filter(tr=>(st[tr.dataset.id]||{{}}).sent).length;const started=trs.filter(tr=>{{const s=st[tr.dataset.id]||{{}};return !s.sent&&(s.opened||s.subject||s.body)}}).length;document.getElementById('progress').textContent=`${{sent}} of ${{trs.length}} sent · ${{started}} in progress`}}
+function render(tr){{const s=st[tr.dataset.id]||{{}};tr.querySelectorAll('span[data-s]').forEach(x=>x.classList.toggle('on',!!s[x.dataset.s]));tr.querySelector('input[data-s=sent]').checked=!!s.sent;tr.classList.toggle('done',!!s.sent);tr.classList.toggle('inprog',!s.sent&&!!(s.opened||s.subject||s.body||s.note));renderTotal()}}
+function renderTotal(){{const trs=[...document.querySelectorAll('tr[data-id]')];const sent=trs.filter(tr=>(st[tr.dataset.id]||{{}}).sent).length;const started=trs.filter(tr=>{{const s=st[tr.dataset.id]||{{}};return !s.sent&&(s.opened||s.subject||s.body||s.note)}}).length;document.getElementById('progress').textContent=`${{sent}} of ${{trs.length}} sent · ${{started}} in progress`}}
 document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=async()=>{{const o=b.dataset.label||(b.dataset.label=b.textContent);const ok=await copyText(b.dataset.t);b.textContent=ok?'Copied ✓':'Copy failed';b.style.background=ok?'#e7f3ea':'#fdecea';setTimeout(()=>{{b.textContent=o;b.style.background=''}},1500);if(ok)mark(b.closest('tr'),b.dataset.k)}});
 document.querySelectorAll('tr[data-id] a.btn').forEach(a=>a.addEventListener('click',()=>mark(a.closest('tr'),'opened')));
 document.querySelectorAll('input[data-s=sent]').forEach(c=>c.onchange=()=>mark(c.closest('tr'),'sent',c.checked));

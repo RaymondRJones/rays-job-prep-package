@@ -15,8 +15,16 @@
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   let q = JSON.parse(localStorage.getItem('hq') || '[]');
   if (!q.length) return 'DONE';
-  await sleep(3500);
-  for (let i = 0; i < 6; i++) { window.scrollBy(0, 1500); await sleep(700); }
+  await sleep(3000);
+  // Results scroll inside <main> (not the window) and only ~3 load until "Load more" is clicked.
+  const main = document.querySelector('main');
+  for (let i = 0; i < 4; i++) {
+    if (main) main.scrollTo(0, main.scrollHeight);
+    window.scrollTo(0, document.body.scrollHeight);
+    await sleep(700);
+    const more = [...document.querySelectorAll('button')].find((b) => b.innerText.trim() === 'Load more');
+    if (more) { more.click(); await sleep(1500); }
+  }
   if (/captcha|security verification|unusual activity/i.test(document.body.innerText.slice(0, 1500))) return 'BLOCKED: stop LinkedIn for 24 h';
 
   // Each result has a visually-hidden "Feed post" heading. Climb to the card that holds the author link.

@@ -28,6 +28,9 @@ Open A-tier lead pages one at a time (paced), capture role scope, recent posts, 
 ## Stage 4: `inmail-drafts`
 Draft messages for 🟢 (and tuned 🟡) recruiters in **plain language a non-engineer recruiter can skim**: a specific hook, one result per job, one signal line, one ask. No tool names. Emails only for published addresses or InMail-disabled recruiters. Leave everything **unsent**. Sales Navigator has no drafts folder, so a draft lives only in an open composer tab. For up to ~7 drafts, type them into separate tabs; for more, build the launcher page (`scripts/build_launcher.py`) so the user can open and fill any number of tabs in their own browser with a bookmarklet. Report which tabs hold which drafts and which are free (Open Profile). The launcher has a per-lead checklist (Opened / Subject / Body / Sent); afterwards, ask what was sent and mark it in `drafts.md`.
 
+## Also: startup founders
+For early-stage companies, skip recruiters and go to the founders with the `startup-founders` skill (YC hiring list + recent seed rounds → CTO/CEO → connection note + InMail).
+
 ## Credit plan to suggest
 - 🟢 first. 🟡 after hand-tuning. Spend a few credits on 🔴 recruiters only as "who should I talk to?" notes, preferring ones with many mutual connections.
 - LinkedIn refunds InMail credits for replies within 90 days, so specific messages pay for themselves.

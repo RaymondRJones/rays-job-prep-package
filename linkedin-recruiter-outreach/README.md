@@ -40,6 +40,8 @@ The orchestrator skill (`recruiter-outreach`) walks through four stage skills:
 
 You can also run any stage on its own ("enrich the A-tier", "draft 5 more").
 
+**Startup founders** (`startup-founders` skill): finds hiring YC startups and companies that just raised a seed round, picks the CTO/CEO, and drafts a 300-character connection note + short InMail for each, staged in the same launcher. Try: "find YC startups hiring backend engineers in SF and draft notes to their CTOs".
+
 ## Ground rules baked into the skills
 - **Never sends anything.** Claude types drafts; you send them. Sales Navigator has no drafts folder, so drafts live in open tabs; the launcher page lets you open and fill as many as you like in your own browser, with a per-lead checklist so you know what you've sent.
 - **Writes for recruiters, not engineers.** Plain-language results, one per job, no tool names, a specific hook, one ask, about 100 words.
@@ -64,6 +66,7 @@ scripts/
   fill-inmail.js                 fills subject/body in the open InMail composer
   build_launcher.py              drafts.md + recruiters.csv → launcher page with a fill-InMail bookmarklet
   build_list.py                  dedupe, filter, tier, guess emails → recruiters.csv
+  yc_hiring.py                   hiring YC startups → scored companies.csv + founders.csv (founders, LinkedIn, open roles)
 templates/
   candidate-profile.md
   inmail.md
