@@ -8,6 +8,7 @@ AI-agent tools for a tech job search. Bring your resume; your AI does the legwor
 |---|---|---|
 | 1 | [**Resume + LinkedIn**](prompts/resume-and-linkedin.md) | Sharper, truthful resume bullets; an audited LinkedIn profile updated in approved batches; and a **facts ledger** of everything you can safely claim |
 | 2 | [**Recruiter outreach**](prompts/recruiter-outreach.md) | Technical recruiters at your target companies found in Sales Navigator, researched for fit, with personalized InMail drafts typed in and left unsent for you to review |
+| 3 | [**Hiring-post monitor**](prompts/hiring-post-monitor.md) | Every ~6 hours, checks your watchlist companies' job boards and "we're hiring" posts on LinkedIn/X, keeps only what fits your profile, and emails you an alert with a suggested outreach note. Add or remove companies by chatting |
 
 Fill in the `<<...>>` parts and paste the prompt into any AI assistant. Step 1 works in plain chat; LinkedIn edits and step 2 need an agent that can control a browser (Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode).
 
