@@ -18,8 +18,10 @@ Include:
 2. **Per role:** dates, stack, and **metric-bearing bullets copied faithfully** (e.g. "cut Cosmos DB latency 50%, $60K/yr"). Keep the numbers exact.
 3. **Proof points ranked:** the 5–6 strongest, most specific, most impressive facts. These open the messages.
 4. **Audience/credentials:** followers, subscribers, rankings, talks. Only numbers that appear on the profile or that the user confirms. If several numbers conflict (e.g. "top 1%" vs "top 3%"), use the one on the profile and note the conflict.
-5. **Angle map:** which proof point fits which kind of team (infra/performance → latency wins; AI teams → LLM/RAG work; payments → fintech roles).
-6. **Do-not-claim list:** anything the user said earlier, or that appeared in old drafts, that the profile doesn't support. Also note overstated generalizations (e.g. "6 years of distributed systems" when one job was front-end).
+5. **Plain-language versions** of the top proof points, for recruiters: outcome + one number, no tool names (e.g. "cut database query times in half and saved about $60K a year"). Keep the exact technical bullet next to it for resumes.
+6. **Approved signal lines:** recent interview loops cleared, competing processes, deadlines, with the exact wording the user approved and what must not be said (e.g. "not an offer", "no level"). Ask the user about these; they're rarely on the resume.
+7. **Angle map:** which proof point fits which kind of team (infra/performance → speed and cost wins; AI teams → the AI product and its impact; payments/pricing → correctness).
+8. **Do-not-claim list:** anything the user said earlier, or that appeared in old drafts, that the profile doesn't support. Also note overstated generalizations (e.g. "6 years of distributed systems" when one job was front-end).
 
 ## Then
 Show the user the proof points and the do-not-claim list in chat, and ask them to correct anything. Update the file before drafting messages.

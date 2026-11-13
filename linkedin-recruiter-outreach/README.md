@@ -41,7 +41,8 @@ The orchestrator skill (`recruiter-outreach`) walks through four stage skills:
 You can also run any stage on its own ("enrich the A-tier", "draft 5 more").
 
 ## Ground rules baked into the skills
-- **Never sends anything.** Claude types drafts; you send them. Sales Navigator has no drafts folder, so drafts live in open tabs; the launcher page lets you open and fill as many as you like in your own browser.
+- **Never sends anything.** Claude types drafts; you send them. Sales Navigator has no drafts folder, so drafts live in open tabs; the launcher page lets you open and fill as many as you like in your own browser, with a per-lead checklist so you know what you've sent.
+- **Writes for recruiters, not engineers.** Plain-language results, one per job, no tool names, a specific hook, one ask, about 100 words.
 - **Never claims anything that isn't in the candidate profile.** In the original run, the first drafts claimed "observability ownership" that wasn't on the resume. The profile step exists to stop that.
 - **Paces itself.** Every profile Claude opens shows up as "X viewed your profile", and LinkedIn runs bot detection. The skills enrich in batches of about 30, with pauses.
 - **Lists data only to the user.** Recruiter data stays in local files; don't publish it.
