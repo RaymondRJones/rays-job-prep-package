@@ -8,10 +8,11 @@ description: Write personalized recruiter InMails grounded in the candidate's ve
 ## Message rules
 - **Only facts from `candidate-profile.md`.** Re-read it before drafting. No "owned X" unless the profile says so.
 - **Open with the recruiter's hook** from enrichment: a role they posted, the org they hire for, or a post of theirs. Be specific ("your Azure Core Senior SWE post"), not generic flattery.
-- **Then 2–3 proof points** chosen by the angle map (performance teams → latency/cost wins; AI teams → LLM/RAG work).
-- **One credential line** (ranking, teaching, audience), using a number only if verified.
+- **Write for a recruiter, not an engineer.** The first reader skims on a phone and checks: fits a role I have? what level? credible proof? what's the ask? Use plain-language outcomes ("cut database query times in half and saved about $60K a year", "built an AI tool that cut a law firm's review time in half"). **No tool or vendor names** (Cosmos DB, Chroma, GPT-4, Spring) and no insider jargon (deterministic evals, multi-tenant, partition-aware). Keep one or two keywords that match their reqs (AI, LLM, search, backend, cloud), since recruiters scan for them. Technical detail belongs on the resume.
+- **Then 2 proof points:** one result per job, matched to their desk (database/infra teams → performance and cost; AI teams → the AI product and its impact; payments/pricing → correctness). One number each, not three.
+- **One credential line**, the strongest verified signal. A recent big-tech interview loop the candidate cleared beats rankings or audience size: it says "already passed a comparable bar" and "interview-ready now", which is what recruiters care about. Only with the user's approved wording; if the role fell through, say why in a few words (e.g. "before a headcount change closed the role"), never call it an offer, and don't state the level unless the user wants it. Otherwise use a ranking, teaching or audience line, with a number only if verified.
 - **One clear ask:** "Could I send you my resume for that role, or anything similar on <team>?" For 🟡/🔴: "…or point me to the right recruiter?"
-- **80–130 words.** Subject under 60 characters, specific and not salesy.
+- **80–130 words** (aim ~100). Subject under 60 characters, specific and not salesy.
 - **Don't name mutual connections** unless the user confirms they know them.
 - **Don't claim a location** the profile doesn't show (e.g. "I'm local").
 - **End with "Best,"** because Sales Navigator appends the user's signature automatically, so "Best, Name" would sign twice.
