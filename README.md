@@ -2,18 +2,16 @@
 
 AI-agent tools for a tech job search. Bring your resume; your AI does the legwork; you stay in control of anything that gets sent.
 
-## What's inside
+## The path (do them in order)
 
-| Package | What it does |
-|---|---|
-| [`linkedin-recruiter-outreach`](linkedin-recruiter-outreach/) | Finds technical recruiters at your target companies in LinkedIn Sales Navigator, researches what each one actually hires for, and types personalized InMail drafts (unsent) grounded in your real resume |
+| Step | Copy-paste prompt | What you get |
+|---|---|---|
+| 1 | [**Resume + LinkedIn**](prompts/resume-and-linkedin.md) | Sharper, truthful resume bullets; an audited LinkedIn profile updated in approved batches; and a **facts ledger** of everything you can safely claim |
+| 2 | [**Recruiter outreach**](prompts/recruiter-outreach.md) | Technical recruiters at your target companies found in Sales Navigator, researched for fit, with personalized InMail drafts typed in and left unsent for you to review |
 
-## Two ways to use it
+Fill in the `<<...>>` parts and paste the prompt into any AI assistant. Step 1 works in plain chat; LinkedIn edits and step 2 need an agent that can control a browser (Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode).
 
-### 1. Copy-paste prompt (any AI agent with a browser)
-Open [`PROMPT.md`](PROMPT.md), fill in your details, and paste it into Claude Code, Claude in Chrome, Codex, ChatGPT agent mode, or any agent that can control a browser.
-
-### 2. Claude Code plugin (recommended for Claude Code users)
+## Claude Code plugin (optional, for step 2)
 ```text
 /plugin marketplace add RaymondRJones/rays-job-prep-package
 /plugin install linkedin-recruiter-outreach@rays-job-prep-package

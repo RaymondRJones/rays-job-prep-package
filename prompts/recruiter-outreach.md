@@ -2,7 +2,7 @@
 
 Works with any AI agent that can **control a browser** (navigate, read pages, run JavaScript): Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode, etc. If you use Claude Code, installing the plugin (see README) is better. This prompt is the portable version.
 
-**Before you paste:** have LinkedIn Sales Navigator (InMail credits) and your resume or LinkedIn URL ready. Fill in the `<<...>>` parts.
+**Before you paste:** have LinkedIn Sales Navigator (InMail credits) and your resume or LinkedIn URL ready. If you ran the [resume + LinkedIn prompt](resume-and-linkedin.md) first, attach its `candidate-profile.md` and Step 1 becomes a quick confirmation. Fill in the `<<...>>` parts.
 
 ---
 

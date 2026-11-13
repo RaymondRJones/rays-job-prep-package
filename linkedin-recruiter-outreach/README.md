@@ -22,7 +22,7 @@ Built from a real run: 157 recruiters across 7 companies, 32 enriched, 5 drafted
 ```
 Or symlink the skills: `ln -s "$(pwd)/skills/"* ~/.claude/skills/`
 
-No Claude Code? Use the copy-paste prompt in [`../PROMPT.md`](../PROMPT.md).
+No Claude Code? Use the copy-paste prompt in [`../prompts/recruiter-outreach.md`](../prompts/recruiter-outreach.md).
 
 ## Use
 In Claude Code, say something like:
