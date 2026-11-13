@@ -67,6 +67,7 @@ scripts/
   build_launcher.py              drafts.md + recruiters.csv → launcher page with a fill-InMail bookmarklet
   build_list.py                  dedupe, filter, tier, guess emails → recruiters.csv
   yc_hiring.py                   hiring YC startups → scored companies.csv + founders.csv (founders, LinkedIn, open roles)
+  yc_brief.py                    YC launch posts, news, full job descriptions + named hiring manager → briefs_raw.json
 templates/
   candidate-profile.md
   inmail.md
