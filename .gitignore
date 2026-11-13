@@ -1,0 +1,4 @@
+outreach/
+__pycache__/
+*.pdf
+.DS_Store
