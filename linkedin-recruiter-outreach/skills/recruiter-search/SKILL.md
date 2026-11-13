@@ -21,7 +21,7 @@ https://www.linkedin.com/sales/search/people?query=(filters:List(
 ```
 (Put it on one line.)
 - **Title:** use `technical recruiter` for big companies (thousands of recruiters). Use plain `recruiter` for small companies (<100 results).
-- **Region IDs** confirmed: `90000084` SF Bay Area, `90000091` Greater Seattle. For other metros, apply the Geography filter once by hand, then read the `id:` from the resulting URL.
+- **Region IDs** confirmed: `90000084` SF Bay Area, `90000091` Greater Seattle. Use only the candidate's target metros; mixing regions dilutes big companies (Google returned 9 Bay Area leads mixed with Seattle vs 89 Bay-only). For other metros, apply the Geography filter once by hand, then read the `id:` from the resulting URL.
 - Without a region filter, big companies return many India/EMEA recruiters on page 1.
 - The page header shows the total ("121 results"). Page 1 = 25 leads. Add `&page=2` for more.
 
@@ -29,7 +29,9 @@ https://www.linkedin.com/sales/search/people?query=(filters:List(
 Results render lazily. Scroll `#search-results-container` before reading. Use `<plugin root>/scripts/extract-search-results.js`: set `COMPANY`, run it as one expression in the page. It appends rows to `localStorage.rx` (which survives navigation) and returns a count plus a preview.
 
 Gotchas:
-- Tool output is capped (~64 KB). Export `localStorage.rx` filtered by company or in halves.
+- Tool output is capped (~64 KB). Prefer exporting as a **file download** (Blob + `<a download>` click in the page); the agent browser reports the saved path (T3: `preview_status().downloads[].path`). Otherwise export `localStorage.rx` filtered by company or in halves.
+- To page through many searches with few tool calls, keep a queue in `localStorage` (`[[company,title,page],...]`): each call extracts the current page, enqueues pages 2..N from the result count (cap ~4 pages = 100 leads per company), then sets `location.href` to the next item. Re-run the same expression until it returns DONE.
+- Names can carry suffixes like "is online" or "was last active 11 minutes ago"; `build_list.py` strips both.
 - Out-of-network leads repeat the name where the title should be; "Viewed" badges insert extra lines. The script strips both.
 - This site's CSP blocks `eval()` **inside** async code. Inline the function in each call rather than eval-ing stored code.
 - Wait ~4 s after navigation, and leave a few seconds between companies.

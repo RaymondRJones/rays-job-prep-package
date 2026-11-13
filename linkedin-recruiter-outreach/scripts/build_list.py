@@ -33,7 +33,7 @@ EMAIL_PATTERNS = {
 
 
 def clean_name(n: str) -> str:
-    n = re.sub(r"\s+is online$", "", n)
+    n = re.sub(r"\s+(is online|was last active.*)$", "", n)
     n = re.sub(r"\(.*?\)|,.*$", "", n)
     n = re.sub(r"[^\w\s.'-]", "", n)
     return re.sub(r"\s+", " ", n).strip()
