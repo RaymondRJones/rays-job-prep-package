@@ -115,7 +115,8 @@ When the user sends one, append ` ✅ SENT <date>` to its heading so it drops ou
 1. `python3 <plugin root>/scripts/build_launcher.py outreach/drafts.md outreach/recruiters.csv outreach/inmail-launcher.html [--staged "Name,Name"]` (`--staged` fades rows already open in agent tabs).
 2. Open it in the user's browser (macOS: `open -a "Google Chrome" <file>`).
 3. Tell the user: drag **Fill InMail** to the bookmarks bar → **Open all leads** (allow pop-ups) → click the bookmark in each tab → review → Send. Copy buttons are the fallback.
-4. The bookmark embeds the drafts: after any rebuild, the user must drag it again.
+4. Each row has a progress checklist saved in the browser: **Opened**, **Subject** and **Body** tick themselves when the user clicks those buttons; the user ticks **Sent**. Sent rows turn green and are skipped by "Open all leads". Ask the user which ones they sent and mark them ` ✅ SENT` in `drafts.md`.
+5. The bookmark embeds the drafts: after any rebuild, the user must drag it again.
 
 **Never click Send**, in either option.
 

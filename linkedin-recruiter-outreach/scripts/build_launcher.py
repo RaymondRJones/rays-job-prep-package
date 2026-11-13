@@ -88,17 +88,19 @@ def main():
 
     e = html.escape
     trs = "".join(
-        f'<tr class="{"staged" if r["staged"] else ""}"><td><b>{e(r["name"])}</b>'
+        f'<tr data-id="{e(r["id"])}" class="{"staged" if r["staged"] else ""}"><td><b>{e(r["name"])}</b>'
         + (" <span class=tag>already open elsewhere</span>" if r["staged"] else "")
         + f'<div class=subj>{e(r["subject"])}</div></td>'
         f'<td><a class=btn href="{e(r["url"])}" target="_blank" rel="noopener">Open lead</a></td>'
-        f'<td><button data-t="{e(r["subject"])}">Copy subject</button> '
-        f'<button data-t="{e(r["body"])}">Copy body</button></td></tr>'
+        f'<td><button data-k=subject data-t="{e(r["subject"])}">Copy subject</button> '
+        f'<button data-k=body data-t="{e(r["body"])}">Copy body</button></td>'
+        '<td class=prog><span data-s=opened>Opened</span><span data-s=subject>Subject</span><span data-s=body>Body</span>'
+        '<label class=sent><input type=checkbox data-s=sent> Sent</label></td></tr>'
         for r in rows
     )
     new = sum(not r["staged"] for r in rows)
     page = f"""<!doctype html><meta charset=utf-8><title>InMail launcher</title>
-<style>body{{font:14px system-ui;max-width:960px;margin:32px auto;padding:0 16px;color:#1d2226}}h1{{font-size:22px}}table{{width:100%;border-collapse:collapse}}td{{padding:10px 8px;border-bottom:1px solid #e5e5e5;vertical-align:top}}.subj{{color:#666;font-size:13px;margin-top:3px}}.btn,button{{display:inline-block;padding:6px 12px;border-radius:16px;border:1px solid #0a66c2;color:#0a66c2;background:#fff;text-decoration:none;cursor:pointer;font:inherit;white-space:nowrap}}.bm{{display:inline-block;padding:10px 18px;background:#0a66c2;color:#fff;border-radius:20px;text-decoration:none;font-weight:600}}.staged{{opacity:.55}}.tag{{font-size:11px;background:#eef3f8;padding:2px 6px;border-radius:8px;margin-left:6px}}ol li{{margin:6px 0}}.note{{background:#fff8e6;padding:10px 14px;border-radius:8px}}</style>
+<style>body{{font:14px system-ui;max-width:960px;margin:32px auto;padding:0 16px;color:#1d2226}}h1{{font-size:22px}}table{{width:100%;border-collapse:collapse}}td{{padding:10px 8px;border-bottom:1px solid #e5e5e5;vertical-align:top}}.subj{{color:#666;font-size:13px;margin-top:3px}}.btn,button{{display:inline-block;padding:6px 12px;border-radius:16px;border:1px solid #0a66c2;color:#0a66c2;background:#fff;text-decoration:none;cursor:pointer;font:inherit;white-space:nowrap}}.bm{{display:inline-block;padding:10px 18px;background:#0a66c2;color:#fff;border-radius:20px;text-decoration:none;font-weight:600}}.staged{{opacity:.55}}.tag{{font-size:11px;background:#eef3f8;padding:2px 6px;border-radius:8px;margin-left:6px}}ol li{{margin:6px 0}}.note{{background:#fff8e6;padding:10px 14px;border-radius:8px}}.prog{{white-space:nowrap}}.prog span{{display:inline-block;font-size:12px;color:#999;border:1px solid #ddd;border-radius:10px;padding:2px 7px;margin-right:4px}}.prog span.on{{color:#1a7f37;border-color:#1a7f37;background:#e7f3ea}}.prog span.on::before{{content:'✓ '}}.sent{{font-weight:600;margin-left:4px;cursor:pointer}}tr.inprog td{{background:#fffbe6}}tr.done td{{background:#eef7f0}}tr.done b{{text-decoration:line-through;color:#666}}#progress{{font-weight:600;margin-left:12px}}</style>
 <h1>InMail launcher: {len(rows)} unsent drafts</h1>
 <ol>
 <li>Drag this button to your bookmarks bar: <a class=bm href="{e(bookmarklet)}">Fill InMail</a></li>
@@ -107,13 +109,23 @@ def main():
 <li>Review, then click <b>Send</b> yourself. Nothing is ever sent automatically.</li>
 </ol>
 <p class=note>Keep tabs open until you send: Sales Navigator has no InMail drafts folder, so a closed composer is lost. Click the bookmark again to refill a tab.</p>
-<p><button id=all>Open all leads ({new} new)</button> <label><input type=checkbox id=inc> include faded rows</label></p>
+<p><button id=all>Open all leads ({new} new)</button> <label><input type=checkbox id=inc> include faded rows</label><span id=progress></span> <button id=reset style="float:right;border-color:#999;color:#666">Reset checklist</button></p>
 <table>{trs}</table>
 <script>
 function legacyCopy(s){{const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();let ok=false;try{{ok=document.execCommand('copy')}}catch(e){{}}ta.remove();return ok}}
 async function copyText(s){{try{{await navigator.clipboard.writeText(s);return true}}catch(e){{return legacyCopy(s)}}}}
-document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=async()=>{{const o=b.dataset.label||(b.dataset.label=b.textContent);const ok=await copyText(b.dataset.t);b.textContent=ok?'Copied ✓':'Copy failed';b.style.background=ok?'#e7f3ea':'#fdecea';setTimeout(()=>{{b.textContent=o;b.style.background=''}},1500)}});
-document.getElementById('all').onclick=()=>{{const inc=document.getElementById('inc').checked;document.querySelectorAll('tr').forEach(tr=>{{if(!inc&&tr.classList.contains('staged'))return;window.open(tr.querySelector('a').href,'_blank')}})}};
+const KEY='inmail-progress';const st=JSON.parse(localStorage.getItem(KEY)||'{{}}');
+function save(){{localStorage.setItem(KEY,JSON.stringify(st))}}
+function mark(tr,k,v=true){{const id=tr.dataset.id;(st[id]=st[id]||{{}})[k]=v;save();render(tr)}}
+function render(tr){{const s=st[tr.dataset.id]||{{}};tr.querySelectorAll('span[data-s]').forEach(x=>x.classList.toggle('on',!!s[x.dataset.s]));tr.querySelector('input[data-s=sent]').checked=!!s.sent;tr.classList.toggle('done',!!s.sent);tr.classList.toggle('inprog',!s.sent&&!!(s.opened||s.subject||s.body));renderTotal()}}
+function renderTotal(){{const trs=[...document.querySelectorAll('tr[data-id]')];const sent=trs.filter(tr=>(st[tr.dataset.id]||{{}}).sent).length;const started=trs.filter(tr=>{{const s=st[tr.dataset.id]||{{}};return !s.sent&&(s.opened||s.subject||s.body)}}).length;document.getElementById('progress').textContent=`${{sent}} of ${{trs.length}} sent · ${{started}} in progress`}}
+document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=async()=>{{const o=b.dataset.label||(b.dataset.label=b.textContent);const ok=await copyText(b.dataset.t);b.textContent=ok?'Copied ✓':'Copy failed';b.style.background=ok?'#e7f3ea':'#fdecea';setTimeout(()=>{{b.textContent=o;b.style.background=''}},1500);if(ok)mark(b.closest('tr'),b.dataset.k)}});
+document.querySelectorAll('tr[data-id] a.btn').forEach(a=>a.addEventListener('click',()=>mark(a.closest('tr'),'opened')));
+document.querySelectorAll('input[data-s=sent]').forEach(c=>c.onchange=()=>mark(c.closest('tr'),'sent',c.checked));
+document.querySelectorAll('tr[data-id] span[data-s]').forEach(x=>{{x.style.cursor='pointer';x.title='Click to toggle';x.onclick=()=>{{const tr=x.closest('tr');mark(tr,x.dataset.s,!(st[tr.dataset.id]||{{}})[x.dataset.s])}}}});
+document.getElementById('reset').onclick=()=>{{if(confirm('Clear all checkmarks on this page?')){{for(const k in st)delete st[k];save();document.querySelectorAll('tr[data-id]').forEach(render)}}}};
+document.querySelectorAll('tr[data-id]').forEach(render);
+document.getElementById('all').onclick=()=>{{const inc=document.getElementById('inc').checked;document.querySelectorAll('tr[data-id]').forEach(tr=>{{if(!inc&&tr.classList.contains('staged'))return;if((st[tr.dataset.id]||{{}}).sent)return;window.open(tr.querySelector('a').href,'_blank');mark(tr,'opened')}})}};
 </script>"""
     open(a.out_html, "w").write(page)
     print(f"{len(rows)} drafts -> {a.out_html}")
