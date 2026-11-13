@@ -105,9 +105,9 @@ def main():
         for r in rows
     )
     new = sum(not r["staged"] for r in rows)
-    founder_help = ('<p class=note><b>Rows with "Copy note":</b> open the profile → <b>Connect</b> → <b>Add a note</b> → paste the note → Send. '
-                    'If they haven\'t accepted after about a week, send the InMail (subject + body) instead. '
-                    'The Fill InMail bookmark only works on Sales Navigator lead pages.</p>') if any(r["note"] for r in rows) else ""
+    founder_help = ('<p class=note><b>Rows with "Copy note":</b> two options. <b>Connection request</b> (free): on the lead page open the <b>…</b> menu next to Message → <b>Connect</b> → '
+                    'paste the note → Send. <b>InMail</b>: click the Fill InMail bookmark (Sales Navigator lead pages only) or use Copy subject / Copy body. '
+                    'Tip: send the note first and the InMail only if they haven\'t accepted after about a week.</p>') if any(r["note"] for r in rows) else ""
     page = f"""<!doctype html><meta charset=utf-8><title>InMail launcher</title>
 <style>body{{font:14px system-ui;max-width:960px;margin:32px auto;padding:0 16px;color:#1d2226}}h1{{font-size:22px}}table{{width:100%;border-collapse:collapse}}td{{padding:10px 8px;border-bottom:1px solid #e5e5e5;vertical-align:top}}.subj{{color:#666;font-size:13px;margin-top:3px}}.btn,button{{display:inline-block;padding:6px 12px;border-radius:16px;border:1px solid #0a66c2;color:#0a66c2;background:#fff;text-decoration:none;cursor:pointer;font:inherit;white-space:nowrap}}.bm{{display:inline-block;padding:10px 18px;background:#0a66c2;color:#fff;border-radius:20px;text-decoration:none;font-weight:600}}.staged{{opacity:.55}}.tag{{font-size:11px;background:#eef3f8;padding:2px 6px;border-radius:8px;margin-left:6px}}ol li{{margin:6px 0}}.note{{background:#fff8e6;padding:10px 14px;border-radius:8px}}.prog{{white-space:nowrap}}.prog span{{display:inline-block;font-size:12px;color:#999;border:1px solid #ddd;border-radius:10px;padding:2px 7px;margin-right:4px}}.prog span.on{{color:#1a7f37;border-color:#1a7f37;background:#e7f3ea}}.prog span.on::before{{content:'✓ '}}.sent{{font-weight:600;margin-left:4px;cursor:pointer}}tr.inprog td{{background:#fffbe6}}tr.done td{{background:#eef7f0}}tr.done b{{text-decoration:line-through;color:#666}}#progress{{font-weight:600;margin-left:12px}}</style>
 <h1>InMail launcher: {len(rows)} unsent drafts</h1>

@@ -67,9 +67,12 @@ Best,
 ```
 Run the same self-checks as `inmail-drafts` (lengths, facts traceable to the profile, hook unique to them).
 
-## 5. Stage
+## 5. Get Sales Navigator lead links
+YC and post sources give regular profile links (`linkedin.com/in/…`), which don't open in Sales Navigator and can't take the Fill InMail bookmark. For each recipient, run a Sales Navigator people search `https://www.linkedin.com/sales/search/people?keywords=<First Last> <Company>` (results load slowly: wait for `a[href*="/sales/lead/"]` up to ~10 s), take the result whose headline names the company, and save its `/sales/lead/<id>` URL as `**Profile:**` (keep the `/in/` link as `**LinkedIn:**`) and in `founders.csv` `sales_nav`. No result → retry with the name only; if the top hit's headline shows another company, open the lead page and confirm the company in their experience before using it. Drive it with a `localStorage` queue like the other scripts.
+
+## 6. Stage
 `python3 <plugin root>/scripts/build_launcher.py outreach/startups/drafts.md - outreach/startups/founder-launcher.html`
-(`-` = use each draft's `**Profile:**` link.) Rows get **Copy note / Copy subject / Copy body** and the progress checklist. Tell the user the sequence: open profile → **Connect → Add a note** → paste → send; if not accepted in ~a week, send the InMail. Update `founders.csv` `status` (drafted → noted → inmailed → replied) when the user reports back.
+(`-` = use each draft's `**Profile:**` link.) Rows get **Copy note / Copy subject / Copy body**, the progress checklist, and work with the Fill InMail bookmark. Tell the user the sequence: lead page → **… → Connect** → paste note → send; if not accepted in ~a week, send the InMail. Update `founders.csv` `status` (drafted → noted → inmailed → replied) when the user reports back.
 
 ## Rules
 - Never send, connect, follow or message for the user.
