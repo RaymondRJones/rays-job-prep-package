@@ -1,50 +1,56 @@
 ---
 name: hiring-monitor
-description: Monitor a watchlist of companies for new job openings and "we're hiring" posts (public job boards, web search, optional logged-in LinkedIn/X), score fit against the user's candidate-profile.md, and email the user an alert via Gmail. Handles watchlist commands (add/remove/list/run/pause) and scheduled runs every ~6 hours. Use for job alerts, hiring-post monitoring, or "watch company X for openings".
+description: Watch target companies for PEOPLE posting that their team is hiring ("my team is looking for…", "I'm hiring", "join my team") on LinkedIn and X, collect the posters into a leads list for later outreach, and also flag new matching jobs on public boards. Handles watchlist commands (add/remove/list/run/pause/settings) and scheduled runs every ~6 hours; alerts go only to the user. Use for "find people hiring at X", hiring-post monitoring, job alerts, or "watch company X".
 ---
 
 # Hiring monitor
 
-State lives in `./monitor/` (override if the user names a folder). `<plugin root>` = the `hiring-monitor` folder two levels above this SKILL.md (resolve symlinks).
-- `watchlist.json`, `settings.json`, `seen.json`: managed by `<plugin root>/scripts/job_boards.py`
-- `profile.md`: copy or link of `candidate-profile.md` (from `resume-bullets` / `candidate-profile`) plus target role, level, and locations
-- `email.txt`: the user's own address; alerts go **only** there
-- `log.md`: one line per run
+**Goal:** find the humans behind openings, a hiring manager, engineer or recruiter saying *"my team is hiring"*, and add them to a leads list the user can reach out to later. Job-board postings are a secondary signal that helps judge fit and give context.
 
-## First-time setup
-1. Ask for: alert email, profile (`candidate-profile.md` or resume), companies, locations, minimum fit (default 3/5), quiet mode (email only on matches, by default).
-2. Write `profile.md` and `email.txt`. Run `python3 <plugin root>/scripts/job_boards.py --dir monitor add "<Company>"` for each company (it auto-detects Greenhouse/Lever/Ashby boards). Edit `monitor/settings.json`: `roles` (must match, e.g. engineer/developer), `focus` (topic terms reported for scoring), `exclude`, `locations`.
-3. Do a first run covering 7 days (`check --since-days 7`).
-4. Set up the schedule for their environment:
-   - Claude Code, computer stays on: `/loop 6h /hiring-monitor run`
-   - Claude Code cloud: `/schedule` a routine every 6h saying "run my hiring monitor" (needs the Gmail connector; no logged-in browser, so it uses job boards + web search)
-   - Cron: `0 */6 * * * cd <dir> && claude -p "/hiring-monitor run"`
-   Tell them which sources each option covers.
+State lives in `./monitor/` (or a folder the user names). `<plugin root>` = the `hiring-monitor` folder two levels above this SKILL.md (resolve symlinks).
 
-## Commands (also via `/hiring-monitor <cmd>`)
-`add <Company>` · `remove <Company>` · `list` · `run` · `pause` / `resume` (write or delete `monitor/PAUSED`) · `settings <changes>`. Confirm each in one line.
+| File | What |
+|---|---|
+| `hiring-leads.csv` | **The main output.** One row per person: found, company, name, headline, poster_type, role_or_team, post_age, post_summary, profile_url, source, fit, why, status, notes |
+| `profile.md` | copy of `candidate-profile.md` + target role, level, metros, and any active interview processes |
+| `watchlist.json`, `settings.json`, `seen.json` | managed by `scripts/job_boards.py` (boards) |
+| `alerts/<date>.md` | each run's report (also emailed if Gmail is available) |
+| `log.md` | one line per run |
+
+## Setup (first time)
+Ask once: companies, target role/level, metros, active processes (e.g. "passed Waymo phone screen"), alert email (optional), minimum fit (default 3/5). Then:
+1. Write `profile.md`; create `hiring-leads.csv` with the header above.
+2. `python3 <plugin root>/scripts/job_boards.py --dir monitor add "<Company>"` for each company; set `settings.json` `locations` to the user's metros only.
+3. First run with a **past-month** window for posts and `--since-days 365` for boards (then `--mark-seen`, so later runs only show new jobs).
+4. Offer a schedule: `/loop 6h /hiring-monitor run` (local; can use the logged-in browser for LinkedIn), a cloud `/schedule` (boards + web search only, no LinkedIn), or manual.
 
 ## Each run
-1. If `monitor/PAUSED` exists, log "paused" and stop.
-2. **Job boards:** `python3 <plugin root>/scripts/job_boards.py --dir monitor check --since-days <days since last run, default 0.3> --mark-seen`. It returns `new_jobs` (already filtered and deduped, with `focus_hits`), `needs_web_search` (companies without a public board), and `errors`.
-3. **Web search** (all companies, and especially `needs_web_search`): recent posts like `site:linkedin.com/posts ("we're hiring" OR "I'm hiring" OR "join my team") "<Company>" <focus term>` and the same with `site:x.com`; careers-page searches for companies without a public board.
-4. **Logged-in browser (optional, local only):** only if a browser tool is already logged in. Never log in and never ask for passwords. LinkedIn: `https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20<Company>&datePosted=%22past-24h%22&sortBy=%22date_posted%22`; X: `https://x.com/search?q=(%22we%27re%20hiring%22%20OR%20%22I%27m%20hiring%22)%20<Company>&f=live`. At most 2 pages per company, 4–7 s apart. On a captcha, login wall, or warning: stop that site and skip it for 24 h (note it in the log).
-5. Merge duplicates (same role from several sources). Add post items' IDs/URLs to `seen.json` so they don't repeat.
-6. **Score 0–5** against `profile.md`: +2 role/level match, +1 specialization or focus match, +1 location/work mode works, +1 lines up with a named proof point. A hiring manager or recruiter naming a specific team is a strong signal. Note it.
-7. **Email** items at or above the threshold, best first, to the address in `email.txt` only, using the Gmail tool (send; if only drafts are possible, create a draft addressed to the user and say so in the log):
-   ```
-   Subject: Hiring alert: <N> new matches (<Company>, <Company>)
-   <Company>: <Role / team> (<location>), fit <s>/5
-   Source: <job board | LinkedIn post by <Name>, <Title> | X post by @handle>, posted <date>
-   Link: <url>
-   Why it fits: <1–2 lines tied to real proof points>
-   Suggested next step: <apply / message the poster / find the team's recruiter / ask for a referral>
-   Draft note for you to send yourself (2–3 sentences, profile facts only): "<…>"
-   Footer: sources checked, failures, "/hiring-monitor add|remove to change the watchlist"
-   ```
-8. Append to `log.md`: time, sources, new items, matches, emailed (y/n), errors.
+1. Stop if `monitor/PAUSED` exists (log it).
+2. **People posts (primary)**, per company, in a logged-in browser only (never log in or ask for passwords):
+   - Queries (content search, sorted by date): `<Co> "my team" hiring`, `<Co> "join my team"`, `<Co> "I'm hiring"`, `<Co> "we're hiring" engineer`, `<Co> "is hiring" "<role>"`, `<Co> "looking for" engineers team`. Window: `past-24h` on scheduled runs, `past-week` if runs were missed, `past-month` on the first run.
+   - Run `<plugin root>/scripts/linkedin-posts.js` (queue-driven: seed `localStorage.hq`, re-run until DONE), then export `localStorage.hp`.
+   - X/Twitter (optional, same rules): `https://x.com/search?q=("my team" OR "I'm hiring" OR "we're hiring") <Co>&f=live`.
+   - Without a logged-in browser, use web search: `site:linkedin.com/posts "<Co>" ("my team is hiring" OR "join my team" OR "I'm hiring")`.
+   - Pace: ~4–7 s between pages, ≤ 6 searches per company per run. On a captcha, login wall or warning, stop that site for 24 h and log it.
+3. **Triage each post.** Keep it only if all of these hold:
+   - The poster **works at the target company** (headline says so). Drop aggregators ("5 jobs at…"), people who just *left*, and other companies that mention the name.
+   - The role is relevant to the user (engineering for an engineer; drop program/ops/sourcing/hardware roles unless asked).
+   - It's in the user's metros or remote.
+   Classify `poster_type`: **hiring manager / team member** (best: the decision-maker or an insider), **recruiter** (good), **new joiner** ("just joined team X": not hiring, but a warm insider for referrals; keep with fit ≤ 4).
+4. **Score fit 0–5** against `profile.md`: +2 role/level match, +1 team/domain matches a proof point, +1 metro works, +1 poster is the hiring manager or on the team. Write a one-line `why` from real profile facts.
+5. **Add new people to `hiring-leads.csv`** (dedupe by `profile_url`; if the person is already there, update `post_age`/`role_or_team` and keep their `status`). New rows get `status=new`.
+6. **Boards (secondary):** `python3 <plugin root>/scripts/job_boards.py --dir monitor check --since-days <since last run> --mark-seen`. Mention new matching roles, especially ones that line up with a lead's team.
+7. **Report** to `alerts/<date>.md` and email it to the user if Gmail is connected: new leads first (name, title, team, why, profile link, post summary), then new board roles, then sources checked and failures.
+8. Append to `log.md`.
+
+## Active-process caution
+If `profile.md` says the user is mid-process at a company (e.g. passed a phone screen), note on that company's leads: *"check with your current recruiter before contacting"*. Contacting a second recruiter mid-loop can confuse the process; hiring managers and team members are fine for questions about the team.
 
 ## Hard rules
-- Email **only** the user. Never message, comment on, like, follow, connect with, or email anyone else, even if a post says "DM me".
-- No invented fit: every reason must come from `profile.md`.
-- Stay light: ~2 browser pages per company per run, back off on rate limits, and if a run fails partway, still send what was found and log the failure.
+- **Collect, don't contact.** Never message, comment on, like, follow, connect with, or email anyone, even if a post says "DM me". Outreach is a separate step the user starts (e.g. with `inmail-drafts`).
+- Email alerts go **only** to the user.
+- No invented fit: every `why` comes from `profile.md`.
+- Post permalinks aren't available in LinkedIn search results; store the author's `profile_url` and a summary of the post instead of guessing URLs.
+
+## Commands
+`add <Co>` · `remove <Co>` · `list` · `run` · `leads` (show `hiring-leads.csv`, best first) · `pause` / `resume` · `settings <changes>`. Confirm each in one line.

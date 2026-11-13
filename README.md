@@ -8,7 +8,7 @@ AI-agent tools for a tech job search. Bring your resume; your AI does the legwor
 |---|---|---|
 | 1 | [**Resume + LinkedIn**](prompts/resume-and-linkedin.md) | Sharper, truthful resume bullets; an audited LinkedIn profile updated in approved batches; and a **facts ledger** of everything you can safely claim |
 | 2 | [**Recruiter outreach**](prompts/recruiter-outreach.md) | Technical recruiters at your target companies found in Sales Navigator, researched for fit, with personalized InMail drafts typed in and left unsent for you to review |
-| 3 | [**Hiring-post monitor**](prompts/hiring-post-monitor.md) | Every ~6 hours, checks your watchlist companies' job boards and "we're hiring" posts on LinkedIn/X, keeps only what fits your profile, and emails you an alert with a suggested outreach note. Add or remove companies by chatting |
+| 3 | [**Hiring-post monitor**](prompts/hiring-post-monitor.md) | Every ~6 hours, finds people at your watchlist companies posting "my team is hiring" on LinkedIn/X (hiring managers, team members, recruiters), keeps the ones that fit your profile in a leads list for later outreach, and flags new matching jobs on public boards. Never contacts anyone. Add or remove companies by chatting |
 
 Fill in the `<<...>>` parts and paste the prompt into any AI assistant. Step 1 works in plain chat; LinkedIn edits and step 2 need an agent that can control a browser (Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode).
 
@@ -30,7 +30,7 @@ Every step comes in two forms with the same instructions:
 |---|---|---|
 | `resume-linkedin-review` | `resume-bullets`, `linkedin-profile-audit` | "Review my resume at ./resume.pdf for senior backend roles" |
 | `linkedin-recruiter-outreach` | `recruiter-outreach`, `candidate-profile`, `recruiter-search`, `recruiter-enrich`, `inmail-drafts` | "Use recruiter-outreach. Targets: Stripe, Google, NVIDIA. Seattle + Bay Area. Skip Amazon." |
-| `hiring-monitor` | `hiring-monitor`, `/hiring-monitor add\|remove\|list\|run\|pause` | "/hiring-monitor add Databricks", then "/loop 6h /hiring-monitor run" |
+| `hiring-monitor` | `hiring-monitor`, `/hiring-monitor add\|remove\|list\|run\|leads\|pause` | "/hiring-monitor add Databricks", then "/loop 6h /hiring-monitor run" |
 
 The `SKILL.md` folders follow the open Agent Skills format, so other agents that support skills can use them by copying the folder into their skills directory.
 
