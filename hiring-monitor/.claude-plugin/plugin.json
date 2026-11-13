@@ -1,0 +1,9 @@
+{
+  "name": "hiring-monitor",
+  "version": "0.1.0",
+  "description": "Every ~6 hours, check watchlist companies' public job boards and 'we're hiring' posts, keep what fits your profile, and email yourself an alert with a suggested outreach note. Manage the watchlist with /hiring-monitor add|remove|list|run.",
+  "author": {
+    "name": "Raymond Jones",
+    "url": "https://github.com/RaymondRJones"
+  }
+}

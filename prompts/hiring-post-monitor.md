@@ -1,5 +1,7 @@
 # Copy-paste prompt: "We're hiring" monitor with email alerts
 
+> **Using Claude Code?** Install the `hiring-monitor` plugin instead (see the [README](../README.md#install-the-skills-claude-code)): same instructions, plus tested scripts and automatic triggering.
+
 Every ~6 hours, your AI checks your watchlist companies for new **"we're hiring" posts** (LinkedIn, X) and **new job openings**, keeps only the ones that fit your resume, and **emails you** a short alert with a suggested outreach note. You manage the watchlist by chatting: "add Databricks", "remove Netflix", "show my list".
 
 **Best after** the [resume + LinkedIn prompt](resume-and-linkedin.md): it uses your `candidate-profile.md` to judge fit.

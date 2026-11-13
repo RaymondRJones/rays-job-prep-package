@@ -12,15 +12,27 @@ AI-agent tools for a tech job search. Bring your resume; your AI does the legwor
 
 Fill in the `<<...>>` parts and paste the prompt into any AI assistant. Step 1 works in plain chat; LinkedIn edits and step 2 need an agent that can control a browser (Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode).
 
-## Claude Code plugin (optional, for step 2)
+## Prompt or skill?
+Every step comes in two forms with the same instructions:
+
+- **Copy-paste prompt** (`prompts/`): works in any AI assistant, no install. Best for step 1, which is a conversation.
+- **Claude Code skills** (plugins below): install once, they trigger automatically, update when you reinstall, and include **tested scripts**. Recommended for steps 2 and 3: the outreach scripts already handle Sales Navigator's quirks, and the monitor's job-board checker is real code with tracking of already-seen jobs.
+
+### Install the skills (Claude Code)
 ```text
 /plugin marketplace add RaymondRJones/rays-job-prep-package
+/plugin install resume-linkedin-review@rays-job-prep-package
 /plugin install linkedin-recruiter-outreach@rays-job-prep-package
+/plugin install hiring-monitor@rays-job-prep-package
 ```
-Then say:
-> Use recruiter-outreach. My resume is ./resume.pdf. Targets: Stripe, Google, NVIDIA. Locations: Seattle + Bay Area. Skip Amazon.
 
-The plugin adds 5 skills (`recruiter-outreach`, `candidate-profile`, `recruiter-search`, `recruiter-enrich`, `inmail-drafts`) plus helper scripts. Details: [`linkedin-recruiter-outreach/README.md`](linkedin-recruiter-outreach/README.md).
+| Plugin | Skills / commands | Try saying |
+|---|---|---|
+| `resume-linkedin-review` | `resume-bullets`, `linkedin-profile-audit` | "Review my resume at ./resume.pdf for senior backend roles" |
+| `linkedin-recruiter-outreach` | `recruiter-outreach`, `candidate-profile`, `recruiter-search`, `recruiter-enrich`, `inmail-drafts` | "Use recruiter-outreach. Targets: Stripe, Google, NVIDIA. Seattle + Bay Area. Skip Amazon." |
+| `hiring-monitor` | `hiring-monitor`, `/hiring-monitor add\|remove\|list\|run\|pause` | "/hiring-monitor add Databricks", then "/loop 6h /hiring-monitor run" |
+
+The `SKILL.md` folders follow the open Agent Skills format, so other agents that support skills can use them by copying the folder into their skills directory.
 
 ## Results from the first real run
 - 157 US technical recruiters found across 7 companies

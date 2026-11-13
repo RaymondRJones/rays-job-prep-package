@@ -1,5 +1,9 @@
 {
   "name": "linkedin-recruiter-outreach",
   "version": "0.1.0",
-  "description": "Find, enrich and draft personalized InMails to tech recruiters with LinkedIn Sales Navigator, grounded in the candidate's own resume or LinkedIn profile. Drafts only; the human always reviews and clicks Send."
+  "description": "Find, enrich and draft personalized InMails to tech recruiters with LinkedIn Sales Navigator, grounded in the candidate's own resume or LinkedIn profile. Drafts only; the human always reviews and clicks Send.",
+  "author": {
+    "name": "Raymond Jones",
+    "url": "https://github.com/RaymondRJones"
+  }
 }

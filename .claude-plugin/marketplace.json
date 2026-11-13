@@ -1,14 +1,25 @@
 {
   "name": "rays-job-prep-package",
+  "description": "AI-agent tools for a tech job search: resume + LinkedIn review, recruiter outreach with Sales Navigator, and a hiring-post monitor with email alerts.",
   "owner": {
     "name": "Raymond Jones",
     "url": "https://github.com/RaymondRJones"
   },
   "plugins": [
     {
+      "name": "resume-linkedin-review",
+      "source": "./resume-linkedin-review",
+      "description": "Step 1: sharpen resume bullets and audit/update your LinkedIn, truthfully and with your approval. Outputs candidate-profile.md."
+    },
+    {
       "name": "linkedin-recruiter-outreach",
       "source": "./linkedin-recruiter-outreach",
-      "description": "Find, enrich and draft personalized InMails to tech recruiters with LinkedIn Sales Navigator, grounded in your resume. Drafts only; you review and send."
+      "description": "Step 2: find, enrich and draft personalized InMails to tech recruiters with LinkedIn Sales Navigator. Drafts only; you review and send."
+    },
+    {
+      "name": "hiring-monitor",
+      "source": "./hiring-monitor",
+      "description": "Step 3: every ~6h, watch your target companies' job boards and hiring posts and email yourself matches with outreach ideas."
     }
   ]
 }

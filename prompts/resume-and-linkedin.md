@@ -1,5 +1,7 @@
 # Copy-paste prompt: improve your resume and LinkedIn
 
+> **Using Claude Code?** Install the `resume-linkedin-review` plugin instead (see the [README](../README.md#install-the-skills-claude-code)): same instructions, plus tested scripts and automatic triggering.
+
 For software engineers. Works with any AI assistant. A browser-capable agent (Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode) can also read and update your live LinkedIn after you approve each change. Without browser access, paste your profile text or attach screenshots and you'll get recommendations only.
 
 **Run this before the [recruiter-outreach prompt](recruiter-outreach.md).** The facts you approve here become the only things your outreach messages are allowed to claim.
