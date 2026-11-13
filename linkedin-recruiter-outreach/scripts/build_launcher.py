@@ -110,7 +110,9 @@ def main():
 <p><button id=all>Open all leads ({new} new)</button> <label><input type=checkbox id=inc> include faded rows</label></p>
 <table>{trs}</table>
 <script>
-document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=async()=>{{await navigator.clipboard.writeText(b.dataset.t);const o=b.textContent;b.textContent='Copied';setTimeout(()=>b.textContent=o,1200)}});
+function legacyCopy(s){{const ta=document.createElement('textarea');ta.value=s;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();let ok=false;try{{ok=document.execCommand('copy')}}catch(e){{}}ta.remove();return ok}}
+async function copyText(s){{try{{await navigator.clipboard.writeText(s);return true}}catch(e){{return legacyCopy(s)}}}}
+document.querySelectorAll('button[data-t]').forEach(b=>b.onclick=async()=>{{const o=b.dataset.label||(b.dataset.label=b.textContent);const ok=await copyText(b.dataset.t);b.textContent=ok?'Copied ✓':'Copy failed';b.style.background=ok?'#e7f3ea':'#fdecea';setTimeout(()=>{{b.textContent=o;b.style.background=''}},1500)}});
 document.getElementById('all').onclick=()=>{{const inc=document.getElementById('inc').checked;document.querySelectorAll('tr').forEach(tr=>{{if(!inc&&tr.classList.contains('staged'))return;window.open(tr.querySelector('a').href,'_blank')}})}};
 </script>"""
     open(a.out_html, "w").write(page)
