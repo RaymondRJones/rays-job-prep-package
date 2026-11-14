@@ -11,7 +11,20 @@ Why: in the original run only 10 of 32 "A-tier" recruiters were real fits. Other
 - Every lead page you open shows them "X viewed your profile". That's fine and even warms them up, but tell the user first.
 - Do **≤30 per batch**, one page at a time, with ~4–7 s of randomized wait (the script waits for you). Stop on any captcha or warning.
 
-## Per lead
+## Bulk (default for > 30 leads): Sales Navigator data API
+`<plugin root>/scripts/enrich-api.js` makes the same requests a lead page makes, from one Sales Navigator tab, at ~8 s per lead (382 leads in ~50 min, no errors in the first run). Instructions are in the file header: seed `localStorage.enrq` with lead ids, run the script (it keeps going in the page), poll, export `localStorage.enr2` as a file download. Then:
+```
+python3 <plugin root>/scripts/triage_enrichment.py enr2.json outreach/recruiters.csv outreach/ [--metro "<place regex>"]
+```
+It writes `enriched.md` (counts per company, why 🔴, already-messaged, flags, Open Profile list, recurring mutuals, 🟢/🟡 with hooks) and adds `fit2, reason2, flags, open_profile, degree, mutuals, hook, last_messaged` to the CSV.
+What the API adds over reading pages:
+- **`lastMsg`**: the date you last messaged them. Catches earlier outreach the user forgot (first run: 15, including 9 from a campaign two months earlier). Mark these ` ✅ SENT` in `drafts.md`.
+- **`inmailRestriction: DISABLED`**: InMail won't work; move them to email.
+- **`badges.openLink`**: Open Profile, so InMail is free (87 of 382).
+- **Location**: many profiles just say "United States"; the current job's location usually names the city.
+- Triage by **job title**, not keywords anywhere: role descriptions often list several desks ("AI infrastructure… and silicon"); treat those as mixed, not wrong.
+
+## Per lead (page-based; small batches, or if the API changes)
 1. Navigate to the lead URL (`/sales/lead/...`).
 2. Run `<plugin root>/scripts/extract-lead.js` as one expression. It scrolls, then stores into `localStorage.enr[url]`:
    `name, degree, headline, about, currentRole (description!), posts[] (last 90 days), common (mutual connections / shared experience), mutuals, experience, education, interests, openProfile`.

@@ -56,7 +56,9 @@ Report counts per company and tier.
 Open each A-tier lead page one at a time. Capture: headline, About, current role description (what they actually hire for), posts and comments from the last 90 days, mutual connections, past employers, connection degree.
 - Read the connection degree ONLY from the header line under their name (e.g. "(She/Her) · 2nd"). Elsewhere on the page "1st" refers to mutual connections.
 - If the headline slot says "Messaged: <date>", I've already contacted them: mark 🔴 "already messaged" and don't draft again. If a page comes back blank, retry it once at the end.
-Rate each person: 🟢 hires for my area or recently posted a matching role · 🟡 adjacent or one level off · 🔴 wrong desk (Staff+ only, hardware, security pentest, design, HR, university, executive search).
+- For a long list (more than ~30), skip the page visits: from one Sales Navigator tab, call the same data requests the lead page makes (profile, posts, shared connections), one lead every ~8 s, in a loop that keeps running in the page. Profile requests need `entityUrn` in the decoration, the posts window must be under 89 days, and the profile URN must be fully percent-encoded. These responses also tell you if I've messaged someone before (`lastMessagingActivity`), whether InMail is disabled (`inmailRestriction`), and Open Profile (`memberBadges.openLink`). Stop on any HTTP 429 or warning.
+- If the profile location just says "United States", check the current job's location before treating them as out of region.
+Rate each person by their job title first (descriptions often list several desks; treat those as mixed, not wrong): 🟢 hires for my area or recently posted a matching role · 🟡 adjacent or one level off · 🔴 wrong desk (Staff+ only, hardware, security pentest, design, HR, university, executive search).
 Write `outreach/enriched.md` with fit, a one-line reason, and the most specific recent "hook" for each. Also tell me about warm paths: recurring mutual connections, 1st-degree recruiters, and Open Profile badges (free messages).
 
 ## Step 4: Draft messages (unsent)
