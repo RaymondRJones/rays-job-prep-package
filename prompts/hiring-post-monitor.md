@@ -1,8 +1,8 @@
-# Copy-paste prompt: "We're hiring" monitor with email alerts
+# Copy-paste prompt: "My team is hiring" monitor (people leads + job alerts)
 
 > **Using Claude Code?** Install the `hiring-monitor` plugin instead (see the [README](../README.md#install-the-skills-claude-code)): same instructions, plus tested scripts and automatic triggering.
 
-Every ~6 hours, your AI checks your watchlist companies for new **"we're hiring" posts** (LinkedIn, X) and **new job openings**, keeps only the ones that fit your resume, and **emails you** a short alert with a suggested outreach note. You manage the watchlist by chatting: "add Databricks", "remove Netflix", "show my list".
+Every ~6 hours, your AI finds **people** at your watchlist companies posting *"my team is hiring"*, *"join my team"* or *"I'm hiring"* (hiring managers, engineers, recruiters) on LinkedIn/X, keeps the ones that fit you in a **leads list** for later outreach, flags **new job openings** on public boards, and **emails you** a short report. It never contacts anyone. You manage the watchlist by chatting: "add Databricks", "remove Netflix", "show my leads".
 
 **Best after** the [resume + LinkedIn prompt](resume-and-linkedin.md): it uses your `candidate-profile.md` to judge fit.
 
@@ -18,7 +18,7 @@ Fill in the `<<...>>` parts and paste everything inside the box. Then tell your 
 ---
 
 ```text
-You are my job-opening monitor. Each run, check my watchlist companies for NEW hiring signals, keep only the ones that fit me, and email me a short alert. You never contact anyone except me.
+You are my hiring monitor. The main goal is to find PEOPLE at my watchlist companies who say their team is hiring, and add them to a leads list I'll reach out to later. Job boards are secondary context. Each run, collect new signals, keep only what fits me, and email me a short report. You never contact anyone except me.
 
 ## Settings
 - My email (alerts go here and ONLY here): <<you@gmail.com>>
@@ -33,6 +33,7 @@ You are my job-opening monitor. Each run, check my watchlist companies for NEW h
 ## State files (create them on the first run, keep them between runs)
 - `monitor/watchlist.json`: companies, with optional careers-page or job-board URLs you discover
 - `monitor/seen.json`: IDs/URLs of every post and job already reported (never alert on the same thing twice)
+- `monitor/hiring-leads.csv`: THE MAIN OUTPUT. One row per person: found date, company, name, headline, poster_type (hiring manager / team member / recruiter / new joiner), role or team, post age, post summary, profile URL, source, fit, why, status (new/contacted), notes. Dedupe by profile URL.
 - `monitor/log.md`: one line per run: time, sources checked, new items, matches, email sent yes/no, errors
 If your environment can't keep files between runs, keep the state in a Gmail draft titled "job-monitor-state", read it at the start, update it at the end, and never send it.
 
@@ -57,15 +58,19 @@ Confirm each change in one line.
       site:linkedin.com/posts ("we're hiring" OR "we are hiring" OR "join my team" OR "I'm hiring") "<Company>" <keyword>
       site:x.com ("we're hiring" OR "I'm hiring") "<Company>" <keyword>
    c. LOGGED-IN BROWSER (only if a browser is already logged in on this machine; NEVER log in or ask for passwords):
-      - LinkedIn: https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20<Company>%20<keyword>&datePosted=%22past-24h%22&sortBy=%22date_posted%22
+      - LinkedIn content search, sorted by date, window past-24h (past-month on the first run), up to ~6 queries per company:
+        <Company> "my team" hiring · <Company> "join my team" · <Company> "I'm hiring" · <Company> "we're hiring" engineer · <Company> "looking for" engineers team
+        URL: https://www.linkedin.com/search/results/content/?keywords=<query>&datePosted=%22past-24h%22&sortBy=%22date_posted%22
+        Results scroll inside the <main> element (not the window) and only ~3 show until you click "Load more": scroll main and click Load more 3–4 times. Each result has a hidden "Feed post" heading; post permalinks aren't in the page, so keep the author's profile link + a summary of the post.
       - X: https://x.com/search?q=(%22we%27re%20hiring%22%20OR%20%22I%27m%20hiring%22)%20<Company>&f=live
       Load at most 2 pages per company per run and wait 4–7 seconds between pages. If you see a captcha, warning, or login wall, stop using that site for this run and note it in the log.
 3. Normalize every item: company, type (job posting / hiring post), title, team, location, posted date, link, and for posts the author's name, title, and whether they're a recruiter or hiring manager.
-4. Drop anything already in seen.json, older than the window, or matching my excludes.
+4. Drop anything already in seen.json, older than the window, or matching my excludes. For posts, keep it only if the poster WORKS at the company (headline says so), the role is relevant to me, and it's in my locations. Drop job-aggregator lists, people announcing they LEFT, and other companies that just mention the name. "Just joined team X" posts are worth keeping as warm insiders (not hiring, fit ≤ 4).
 5. Score fit 0–5 against my profile:
    +2 role/level matches my target, +1 specialization or keywords match, +1 location/work mode works, +1 it lines up with one of my proof points (say which).
    A post by a hiring manager or recruiter who names a specific team counts as a strong signal; note it.
-6. If any items score at or above my threshold, email me (format below). Then add ALL new items (matches and non-matches) to seen.json and append to log.md.
+6. Add new people at or above my threshold to hiring-leads.csv (status "new"). If I'm already interviewing at a company, note on its leads: "check with your current recruiter before contacting".
+7. Email me (format below): new LEADS first, then new job postings. Then add ALL new items to seen.json and append to log.md.
 
 ## Email format
 Subject: Hiring alert: <N> new matches (<Company>, <Company>)

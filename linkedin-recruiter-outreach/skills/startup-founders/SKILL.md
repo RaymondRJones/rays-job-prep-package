@@ -46,6 +46,8 @@ Founders read differently from recruiters: they want someone who can **build and
 | Proof | That build + one current-job result, one number each |
 | Ask | A quick chat about the named role; optionally reflect their need back ("You mentioned more demand than you can handle…") |
 
+**No compliment openers.** "X stuck with me", "loved your story", "is impressive", "smart moat", "a fun problem" read as templates; users dislike them. Open straight on point ("I'm reaching out about <role>. As a founder I built …") or on their problem ("<their problem> is the same document problem I worked on as a founder"). The specific detail does the work.
+
 **Engaging = specific + about them.** Before saving, check: would this message make sense sent to any other company? If yes, rewrite the hook. Re-check every candidate claim word by word: phrases like "sold it to", "sat with their team" or "inside their workflow" are easy to invent and usually aren't in the profile.
 
 - **Being a former founder is the strongest hook** if the profile supports it; lead with it for founder audiences.
@@ -56,12 +58,12 @@ Founders read differently from recruiters: they want someone who can **build and
 
 Save to `outreach/startups/drafts.md`:
 ```
-### 1. Sohil Bhatia: Kalinda (YC S25), CTO
+### 1. Jane Doe: Acme AI (YC S25), CTO
 **Profile:** https://www.linkedin.com/in/...
-**Note:** Hi Sohil, saw Kalinda is hiring a founding engineer. ...
+**Note:** Hi Jane, saw Acme is hiring a founding engineer. ...
 **Subject:** ...
 
-Hi Sohil,
+Hi Jane,
 ...
 Best,
 ```

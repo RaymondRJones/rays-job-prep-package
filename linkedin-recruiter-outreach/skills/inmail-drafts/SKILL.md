@@ -63,7 +63,7 @@ Ask the user before using any of these for the first time, and record the approv
 - Claim anything not in `candidate-profile.md` ("owned X", "led Y", a location, a level).
 - Name a mutual connection unless the user confirms they know them.
 - Mention an offer that was rescinded, or a company the user doesn't want to discuss.
-- Flatter generically ("I've always admired <Co>").
+- Flatter generically ("I've always admired <Co>") or open with a compliment ("your post stuck with me", "loved your story", "is impressive"). The specific detail is the hook; praise makes it read like a template.
 
 ### Channel differences
 | | InMail (Sales Navigator) | Email (published address, or InMail disabled) |
