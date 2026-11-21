@@ -1,7 +1,7 @@
 {
   "name": "job-applications",
-  "version": "0.1.0",
-  "description": "Fill job applications in Chrome with the Simplify extension, answer the leftover questions from your verified profile and a growing answer bank, ask you for anything unknown, and stop for your review before Submit. Logs every application.",
+  "version": "0.2.0",
+  "description": "Fill job applications in Chrome with the Simplify extension, answer the leftover questions from your verified profile and a growing answer bank, ask you for anything unknown, and stop for your review before Submit unless you choose submit-without-review. Logs every application.",
   "author": {
     "name": "Raymond Jones",
     "url": "https://github.com/RaymondRJones"

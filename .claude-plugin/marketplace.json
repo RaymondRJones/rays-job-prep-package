@@ -24,7 +24,7 @@
     {
       "name": "job-applications",
       "source": "./job-applications",
-      "description": "Step 5: fill job applications in Chrome with the Simplify extension, answer leftover questions from your verified profile and a growing answer bank, and stop for your review before Submit."
+      "description": "Step 5: fill job applications in Chrome with the Simplify extension, answer leftover questions from your verified profile and a growing answer bank, and stop for your review before Submit unless you choose submit-without-review."
     }
   ]
 }

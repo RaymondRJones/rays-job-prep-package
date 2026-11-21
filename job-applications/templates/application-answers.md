@@ -3,11 +3,21 @@ Private. Keep this file local. Updated <date>.
 
 Answer each standing question once. "Ask me every time" and "leave blank" are valid answers.
 
+## How to run
+### Submit mode
+- Answer: <"review each one before Submit" (default) / "submit without review; come back only if it fails">
+
 ## Contact details to use on applications
+### Legal name (exactly as on government ID)
+- Answer: <...>
 ### Preferred first name
 - Answer: <...>
 ### Email and phone for applications
 - Answer: <one email, one phone>
+### Home address (street, city, state, zip)
+- Answer: <address, or "ask me every time" / "skip forms that require it">
+### Current or most recent job title and employer
+- Answer: <...>
 ### Website / portfolio link
 - Answer: <URL, or "leave blank">
 ### Cover letter when optional
@@ -30,6 +40,12 @@ Answer each standing question once. "Ask me every time" and "leave blank" are va
 ### Acceptable work modes and locations
 - Answer: <on-site / hybrid / remote; cities>
 
+### Days in office you accept, by city (and any schedule limits, e.g. weekend work)
+- Answer: <e.g. "up to 5 days in SF / Bay Area">
+
+### Do you plan to work remotely if the role allows it?
+- Answer: <...>
+
 ### Earliest start date / notice period
 - Answer: <...>  (re-confirm after 30 days)
 
@@ -43,7 +59,17 @@ Answer each standing question once. "Ask me every time" and "leave blank" are va
 - Answer: <e.g. "Company careers page" unless a referral applies>
 
 ### Have you worked for or applied to this company before? Relatives employed here?
-- Answer: ask me every time
+- Answer: <full list of past employers, so "No" is safe everywhere else, or "ask me every time">
+
+## Consents
+### Text / WhatsApp messages about the application
+- Answer: <yes / no / only when required to submit>
+### Marketing or careers email
+- Answer: <...>
+### Keep my details for future roles (talent pool)
+- Answer: <...>
+### Storing my voluntary demographic answers
+- Answer: <...>
 
 ### Are you at least 18?
 - Answer: <...>
@@ -57,6 +83,12 @@ Answer each standing question once. "Ask me every time" and "leave blank" are va
 
 ### Criminal history questions
 - Answer: ask me every time
+
+### Financial licenses (FINRA Series) and employment by a company's auditor (Deloitte, PwC, EY, KPMG)
+- Answer: <...>
+
+### Arbitration agreements and "I personally completed this application" certifications
+- Answer: I read and submit these myself
 
 ### Non-compete or other agreements limiting employment
 - Answer: <...>
@@ -88,6 +120,9 @@ Answer each standing question once. "Ask me every time" and "leave blank" are va
 - Answer: <approved text>
 - Status: CONFIRMED
 - Applies to: <e.g. applied-AI startups>
+
+### A hobby or passion (asked by small startups)
+- Answer: <approved text>
 
 ### A hard technical problem you solved
 - Answer: <approved text>
