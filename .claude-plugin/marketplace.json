@@ -1,6 +1,6 @@
 {
   "name": "rays-job-prep-package",
-  "description": "AI-agent tools for a tech job search: resume + LinkedIn review, recruiter and startup-founder outreach with Sales Navigator, and a hiring-post monitor that collects people saying 'my team is hiring'.",
+  "description": "AI-agent tools for a tech job search: resume + LinkedIn review, recruiter and startup-founder outreach with Sales Navigator, and a hiring-post monitor that collects people saying 'my team is hiring', and Simplify-assisted job applications with an answer bank.",
   "owner": {
     "name": "Raymond Jones",
     "url": "https://github.com/RaymondRJones"
@@ -20,6 +20,11 @@
       "name": "hiring-monitor",
       "source": "./hiring-monitor",
       "description": "Step 3: every ~6h, find people at your target companies posting 'my team is hiring', keep them in a leads list for outreach, and flag new matching jobs. Never contacts anyone."
+    },
+    {
+      "name": "job-applications",
+      "source": "./job-applications",
+      "description": "Step 5: fill job applications in Chrome with the Simplify extension, answer leftover questions from your verified profile and a growing answer bank, and stop for your review before Submit."
     }
   ]
 }
