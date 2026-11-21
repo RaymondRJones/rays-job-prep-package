@@ -9,7 +9,7 @@ Simplify fills the standard fields. You check its work, answer what it leaves bl
 
 **Inputs:** job links (or a search to pick from), `outreach/candidate-profile.md` (from `resume-bullets` / `candidate-profile`), the approved resume file, and the user's LinkedIn profile text if the profile file doesn't cover a question.
 **Outputs:** `outreach/application-answers.md` (the answer bank; start from `templates/application-answers.md`) and `outreach/applications.csv` (the log).
-**Needs:** the user's own Chrome with the Simplify extension installed and signed in, driven by a browser agent that works inside that Chrome (for example Claude in Chrome). A separate or headless browser won't have the extension.
+**Needs:** the user's own Chrome with the Simplify extension installed and signed in, driven by a browser agent that works inside that Chrome (for example Claude in Chrome). A separate or headless browser won't have the extension. Claude Code started by another app (an SDK or desktop host) loads its Chrome tools only when `CLAUDE_CODE_ENABLE_CFC=1` is set, for example under `env` in `~/.claude/settings.json`; in a terminal, start it with `claude --chrome`.
 
 ## Rules
 - **Never submit without approval.** The default is per application: fill, show the review summary, and stop. The user presses Submit, or tells you "submit" for that one. If the user says to submit without review ("just submit them"), save that as the submit mode in the answer bank and submit each application once every field is filled from a confirmed source. Even then, stop and hand over any form that has an arbitration agreement, an e-signature, or a "I personally completed this application" certification, and never tick those boxes yourself.
@@ -25,12 +25,13 @@ Simplify fills the standard fields. You check its work, answer what it leaves bl
 2. **Answer bank.** Create `outreach/application-answers.md` from the template. Don't open with the whole list of standing questions. Run Simplify on the first form and read what it filled: its answers for sponsorship, work authorization, demographics and "how did you hear" are the user's own saved choices, so ask the user to confirm them as standing answers instead of asking from scratch. Ask the remaining standing questions when a form first needs them, and word each one so the answer covers later forms too ("here and on the other Bay Area roles"). The user may answer "ask me every time" or "leave blank"; save that as the answer.
 
 ## Finding jobs (when the user gives a search instead of links)
-1. In a logged-in LinkedIn tab, run `scripts/linkedin-job-links.js` (edit the `SEARCH` block: keywords, location, date posted, level). It is read-only and returns each job's company, role, location and off-site apply link.
-2. Keep jobs whose apply type is `OffsiteApply`. Easy Apply jobs stay inside LinkedIn and have no outside form.
-3. Drop skip-list companies, companies the user is already interviewing with, staffing marketplaces, and anything already in `applications.csv`.
-4. Save the rest to `outreach/job-queue.csv` (`found, company, role, location, system, linkedin_job_id, apply_url, status`), show the list, and let the user pick or reorder before applying.
+Use the first source that covers what the user wants. All of them write to the same queue, `outreach/job-queue.csv` (`found, company, role, location, system, linkedin_job_id, apply_url, status`), and skip anything already queued or in `applications.csv`.
 
-Greenhouse, Ashby and Lever forms are single-page and quickest. Workday needs an account per employer, which the user creates.
+1. **Company job boards (default; no login, no browser).** Run `python3 scripts/find_jobs.py --dir outreach`. It reads the public Greenhouse, Lever and Ashby boards for every company in `outreach/companies.txt`, keeps postings that match `outreach/job-search.json` (title terms, exclusions, locations, maximum age in days, companies to skip), and appends the new ones as `queued` with a direct link to the form. The first run creates both files from defaults: set the filters from the candidate profile's target role and locations, and put the skip list and any company the user is already interviewing with in `skip_companies`. Add companies with `--add "Name" "Name"`; preview with `--dry-run`. Run it again whenever the queue runs low.
+2. **Simplify's public lists (new grads and interns).** Add `--simplify new-grad` or `--simplify internships` to the same command.
+3. **LinkedIn search (companies without a public board, or a broader sweep).** In a logged-in LinkedIn tab, run `scripts/linkedin-job-links.js` (edit its `SEARCH` block). Keep jobs whose apply type is `OffsiteApply`; Easy Apply jobs have no outside form. Drop staffing marketplaces, then append the rest to the queue.
+
+Show the new rows and let the user remove any before applying. Greenhouse, Ashby and Lever forms are single-page and quickest. Workday needs an account per employer, which the user creates.
 
 ## Without Simplify
 If the browser you control doesn't have the extension, skip the autofill step and fill every field from the profile and answer bank. Everything else stays the same: one batch of questions, the review summary, the user submits.

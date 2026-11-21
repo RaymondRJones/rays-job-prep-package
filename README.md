@@ -10,7 +10,7 @@ AI-agent tools for a tech job search. Bring your resume; your AI does the legwor
 | 2 | [**Recruiter outreach**](prompts/recruiter-outreach.md) | Technical recruiters at your target companies found in Sales Navigator, researched for fit, with personalized InMail drafts typed in and left unsent for you to review |
 | 3 | [**Hiring-post monitor**](prompts/hiring-post-monitor.md) | Every ~6 hours, finds people at your watchlist companies posting "my team is hiring" on LinkedIn/X (hiring managers, team members, recruiters), keeps the ones that fit your profile in a leads list for later outreach, and flags new matching jobs on public boards. Never contacts anyone. Add or remove companies by chatting |
 | 4 | [**Startup founders**](prompts/startup-founders.md) | Hiring YC startups and companies that just raised a seed round, a short brief on what each one needs, the founder who owns the hire (with their Sales Navigator link), and a connection note + InMail drafted for each. Never sends |
-| 5 | [**Apply to jobs**](prompts/apply-to-jobs.md) | Applications filled in your Chrome with the [Simplify](https://simplify.jobs) extension, every field checked against your facts ledger, leftover questions answered from an **answer bank** that grows each time you answer one, and a stop for your review before Submit (or, if you say so, submitted for you and reported back only when one fails). Can also pull job links from a LinkedIn job search |
+| 5 | [**Apply to jobs**](prompts/apply-to-jobs.md) | Applications filled in your Chrome with the [Simplify](https://simplify.jobs) extension, every field checked against your facts ledger, leftover questions answered from an **answer bank** that grows each time you answer one, and a stop for your review before Submit (or, if you say so, submitted for you and reported back only when one fails). Includes a job finder that fills your queue with fresh postings from company job boards, Simplify's lists, or a LinkedIn search |
 
 Fill in the `<<...>>` parts and paste the prompt into any AI assistant. Step 1 works in plain chat; LinkedIn edits and step 2 need an agent that can control a browser (Claude Code with a browser tool, Claude in Chrome, Codex, ChatGPT agent mode). Step 5 needs an agent that works inside your own Chrome, because that is where the Simplify extension lives.
 
@@ -34,7 +34,7 @@ Every step comes in two forms with the same instructions:
 | `resume-linkedin-review` | `resume-bullets`, `linkedin-profile-audit` | "Review my resume at ./resume.pdf for senior backend roles" |
 | `linkedin-recruiter-outreach` | `recruiter-outreach`, `candidate-profile`, `recruiter-search`, `recruiter-enrich`, `inmail-drafts`, `startup-founders` | "Use recruiter-outreach. Targets: Stripe, Google, NVIDIA. Seattle + Bay Area. Skip Amazon." |
 | `hiring-monitor` | `hiring-monitor`, `/hiring-monitor add\|remove\|list\|run\|leads\|pause` | "/hiring-monitor add Databricks", then "/loop 6h /hiring-monitor run" |
-| `job-applications` | `apply-to-jobs` | "Apply to these five jobs with Simplify: <links>" |
+| `job-applications` | `apply-to-jobs` | "Find new backend jobs posted this week and apply to them" |
 
 The `SKILL.md` folders follow the open Agent Skills format, so other agents that support skills can use them by copying the folder into their skills directory.
 
@@ -53,4 +53,5 @@ The `SKILL.md` folders follow the open Agent Skills format, so other agents that
 - LinkedIn Sales Navigator (for InMail credits and lead search)
 - An AI agent with browser control
 - Google Chrome with the Simplify extension, signed in (step 5 only)
+- If Claude Code runs inside another app and can't see Chrome, add `"env": {"CLAUDE_CODE_ENABLE_CFC": "1"}` to `~/.claude/settings.json` and start a new session (in a terminal, `claude --chrome` does the same)
 - Python 3 (optional, for the list-building script)
