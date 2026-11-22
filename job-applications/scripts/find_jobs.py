@@ -5,6 +5,7 @@ No login, no API keys, no browser. Sources:
   1. Public job boards (Greenhouse, Lever, Ashby) for the companies in companies.txt.
      These are also the quickest forms to fill.
   2. Optional: Simplify's public new-grad or internship list (--simplify new-grad|internships).
+     For Simplify's full job board with fit scoring, use simplify_board.py.
 
 Files, all in --dir (default ./outreach):
   companies.txt      one company per line; "Name | board | token" once detected (the script fills that in)
@@ -42,7 +43,7 @@ SIMPLIFY_LISTS = {
 }
 DEFAULT_SEARCH = {
     "titles": ["software engineer", "backend engineer", "backend", "full stack", "platform engineer"],
-    "exclude": ["intern", "new grad", "staff", "principal", "manager", "director", "frontend", "ios", "android",
+    "exclude": ["intern", "new grad", "staff", "principal", "manager", "director", "frontend", "front end", "front-end", "ios", "android",
                 "embedded", "hardware", "firmware", "security", "solutions", "support", "sales", "recruiter"],
     # A location matches if it contains one of these as a whole word. A bare "Remote" always matches.
     "locations": ["San Francisco", "Bay Area", "United States", "USA", "US"],
