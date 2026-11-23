@@ -2,6 +2,10 @@
 // Run in a logged-in linkedin.com tab (paste into the console, or run through a
 // browser agent's "evaluate JavaScript" tool). Read-only: it applies to nothing.
 //
+// Note: browser agents with a permission check (e.g. Claude in Chrome) may block this,
+// because it calls LinkedIn's internal API with the session token. In that case read the
+// normal search results page instead (see SKILL.md, Finding jobs, source 3).
+//
 // Edit SEARCH, then run. Returns rows of
 //   { id, company, role, location, applyType, applyUrl, applied }
 // applyType "OffsiteApply" means the application is on the company's own site.
