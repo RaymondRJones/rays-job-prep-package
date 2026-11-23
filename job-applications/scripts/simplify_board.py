@@ -30,6 +30,7 @@ Usage:
   simplify_board.py                           # add matches to the queue
   simplify_board.py --where bay-area --days 7 # Bay Area roles (on-site, hybrid or remote) from the last week
   simplify_board.py --limit 120 --min-fit 50  # look at more postings, keep only strong fits
+  simplify_board.py --recheck                 # reopen postings already in simplify-matches.csv (default skips them)
 """
 import argparse
 import csv
@@ -285,6 +286,8 @@ def main():
     ap.add_argument("--easy-forms", action="store_true",
                     help="keep only Greenhouse, Ashby and Lever forms (single page, no account needed)")
     ap.add_argument("--dry-run", action="store_true", help="show matches without writing the queue")
+    ap.add_argument("--recheck", action="store_true",
+                    help="reopen postings already in simplify-matches.csv (default: skip them so each run goes deeper)")
     args = ap.parse_args()
 
     folder = Path(args.dir).expanduser()
@@ -301,6 +304,11 @@ def main():
     cutoff = datetime.now(timezone.utc) - timedelta(days=args.days or s["max_age_days"])
     skip = {c.lower() for c in s["skip_companies"]}
     urls, roles = known_jobs(folder)
+    seen = set()
+    if report_path.exists() and not args.recheck:
+        for r in csv.DictReader(report_path.open(newline="")):
+            if r.get("simplify_url"):
+                seen.add(r["simplify_url"].rstrip("/").rsplit("/", 1)[-1])
 
     # 1. Candidates from the board, newest first, passing the shared title filters.
     filt, candidates, page, found = filter_for(args.where, fit["levels"], cutoff), [], 1, 0
@@ -310,7 +318,7 @@ def main():
         for hit in res.get("hits", []):
             d = hit["document"]
             title, company = d.get("title", ""), d.get("company_name", "")
-            if company.lower() in skip or role_key(company, title) in roles:
+            if company.lower() in skip or role_key(company, title) in roles or d.get("id") in seen:
                 continue
             if any(word(x).search(title) for x in s["exclude"]) or not any(word(x).search(title) for x in s["titles"]):
                 continue
