@@ -17,7 +17,7 @@ Also ask (skip what's known): Open to Work public or recruiters-only? Is the cur
 - Never invent credentials, levels, location flexibility, or skills. Don't add a skill just because a job post lists it.
 
 ## Audit, in order
-1. **Basics:** name, photo/banner (professional, legible, no misused employer branding), clean URL, location = real target market, industry, working contact/portfolio links.
+1. **Basics:** name, photo/banner (professional, legible, no misused employer branding; a blank or generic banner → offer `linkedin-banner`), clean URL, location = real target market, industry, working contact/portfolio links.
 2. **Headline:** recognizable target title + specialty + a few supported skills/domains; no unearned level/title/cert; new grads distinguish target from earned. Give 2–3 options only for genuinely different positioning, and recommend one.
 3. **About:** the first two lines say who they are and which roles they fit; strongest recent evidence early; skills tied to work; no keyword dumps. May be broader than the resume, never contradictory. New grads: internships, projects, open source, research, described honestly.
 4. **Experience (each entry):** employer, title, type, location, and dates match the resume; opens with product/system context; ownership and metrics qualified (same rules as `resume-bullets`); tech actually used there; programs and volunteering not shown as jobs.

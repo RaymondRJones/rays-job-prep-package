@@ -9,7 +9,7 @@
     {
       "name": "resume-linkedin-review",
       "source": "./resume-linkedin-review",
-      "description": "Step 1: sharpen resume bullets and audit/update your LinkedIn, truthfully and with your approval. Outputs candidate-profile.md."
+      "description": "Step 1: sharpen resume bullets and audit/update your LinkedIn, truthfully and with your approval, and build a LinkedIn banner from your strongest numbers. Outputs candidate-profile.md."
     },
     {
       "name": "linkedin-recruiter-outreach",
@@ -24,7 +24,7 @@
     {
       "name": "job-applications",
       "source": "./job-applications",
-      "description": "Step 5: fill job applications in Chrome with the Simplify extension, answer leftover questions from your verified profile and a growing answer bank, and stop for your review before Submit unless you choose submit-without-review."
+      "description": "Step 5: fill job applications in Chrome with the Simplify extension, answer leftover questions from your verified profile and a growing answer bank, and stop for your review before Submit unless you choose submit-without-review. Saves what each company was told and builds a recruiter-screen brief when one replies."
     }
   ]
 }

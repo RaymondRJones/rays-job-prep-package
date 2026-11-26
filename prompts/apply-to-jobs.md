@@ -77,6 +77,8 @@ Keep one entry per question in the answer bank: the question in plain words · t
 ## Log
 Keep `applications.csv`: date, company, role, location, url, application system, status (filled-awaiting-review / submitted / skipped / blocked), resume file, number of new questions, notes (for anything not submitted, exactly what I need to do). Write "submitted" only after you see the confirmation.
 
+Also save one file per application, `applications/<date>-<company>-<role>.md`, before you submit: the posting's text (title, location, salary range, duties, requirements, link, date), and every question with the exact answer you sent, free-text answers word for word. Postings disappear, and I will need this when the company calls.
+
 ## When we finish
 Give me: what was submitted, what is filled and waiting for me, what was skipped or blocked and why; the new questions you learned; answers still DRAFT or DERIVED; fixes to make in my Simplify profile; the updated `application-answers.md` and `applications.csv`.
 

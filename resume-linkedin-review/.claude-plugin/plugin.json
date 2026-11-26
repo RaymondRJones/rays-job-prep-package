@@ -1,7 +1,7 @@
 {
   "name": "resume-linkedin-review",
-  "version": "0.2.0",
-  "description": "Interactive, truthful resume-bullet rewriting and an audit-first LinkedIn profile review with approved, verified batches. Produces candidate-profile.md for outreach.",
+  "version": "0.3.0",
+  "description": "Interactive, truthful resume-bullet rewriting, an audit-first LinkedIn profile review with approved, verified batches, and a LinkedIn banner built from your strongest resume numbers. Produces candidate-profile.md for outreach.",
   "author": {
     "name": "Raymond Jones",
     "url": "https://github.com/RaymondRJones"

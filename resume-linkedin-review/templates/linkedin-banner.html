@@ -1,0 +1,68 @@
+<!doctype html>
+<!-- LinkedIn banner, 1584 x 396. Edit the text in <body> and the colors in :root, then run
+     scripts/render_banner.py. Open with ?preview=1 to see where the profile photo will sit. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --bg: #0f1720;        /* background */
+    --bg2: #16222e;       /* second background tone */
+    --ink: #f4f6f8;       /* main text */
+    --muted: #9fb0c0;     /* labels */
+    --accent: #4fb3ff;    /* numbers and the rule */
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { background: #fff; }
+  html, body { width: 1584px; height: 396px; overflow: hidden; }
+  body {
+    background: linear-gradient(100deg, var(--bg) 0%, var(--bg) 35%, var(--bg2) 100%);
+    color: var(--ink);
+    font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative;
+  }
+  /* Everything a recruiter must read sits here: right of the photo, clear of the edges. */
+  .content {
+    position: absolute; left: 560px; right: 72px; top: 0; bottom: 0;
+    display: flex; flex-direction: column; justify-content: center; gap: 30px;
+  }
+  .role { font-size: 54px; font-weight: 700; letter-spacing: -1px; line-height: 1.05; white-space: nowrap; }
+  .role span { color: var(--muted); font-weight: 500; }
+  .proof { display: flex; gap: 56px; }
+  .stat { border-left: 5px solid var(--accent); padding-left: 20px; }
+  .num { font-size: 58px; font-weight: 800; color: var(--accent); line-height: 1; white-space: nowrap; }
+  .label { font-size: 28px; color: var(--ink); margin-top: 10px; line-height: 1.15; white-space: nowrap; }
+  .where { font-size: 26px; color: var(--muted); letter-spacing: 0.5px; white-space: nowrap; }
+  /* Left side stays empty of text: the photo covers part of it. */
+  .mark { position: absolute; left: 72px; top: 56px; width: 120px; height: 8px; background: var(--accent); border-radius: 4px; }
+  /* Preview only */
+  .photo { display: none; position: absolute; left: 48px; top: 196px; width: 304px; height: 304px;
+           border-radius: 50%; background: #c9d2da; border: 8px solid #fff; opacity: .92; }
+  .preview .photo { display: block; }
+  html:has(.preview), .preview { overflow: visible; }
+  .too-wide { outline: 6px solid #ff3b30; }
+</style>
+</head>
+<body>
+  <div class="mark"></div>
+  <div class="content">
+    <!-- 1. The role they should hire you for. Six words or fewer. -->
+    <div class="role">Backend Engineer <span>· Payments &amp; APIs</span></div>
+    <!-- 2. Two or three numbers from the resume. Label: five words or fewer. -->
+    <div class="proof">
+      <div class="stat"><div class="num">−50%</div><div class="label">query latency</div></div>
+      <div class="stat"><div class="num">40+</div><div class="label">markets launched</div></div>
+      <div class="stat"><div class="num">2M</div><div class="label">requests a day</div></div>
+    </div>
+    <!-- 3. Where the work was done, or the stack. Plain text, no logos. -->
+    <div class="where">Acme Pay · Northwind · Java · Python · AWS</div>
+  </div>
+  <div class="photo"></div>
+  <script>
+  if (location.search.includes("preview")) document.body.classList.add("preview");
+  // Red outline on any line that runs past the safe area. Shorten the text; don't shrink the font.
+  for (const el of document.querySelectorAll(".role, .proof, .where"))
+    if (el.scrollWidth > el.parentElement.clientWidth) el.classList.add("too-wide");
+</script>
+</body>
+</html>

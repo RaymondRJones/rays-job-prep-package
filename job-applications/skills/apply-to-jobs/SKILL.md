@@ -8,7 +8,7 @@ description: Fill job applications in the user's Chrome using the Simplify exten
 Simplify fills the standard fields. You check its work, answer what it leaves blank from facts the user has confirmed, ask for the rest, and remember every answer so the next application needs fewer questions.
 
 **Inputs:** job links (or a search to pick from), `outreach/candidate-profile.md` (from `resume-bullets` / `candidate-profile`), the approved resume file, and the user's LinkedIn profile text if the profile file doesn't cover a question.
-**Outputs:** `outreach/application-answers.md` (the answer bank; start from `templates/application-answers.md`) and `outreach/applications.csv` (the log).
+**Outputs:** `outreach/application-answers.md` (the answer bank; start from `templates/application-answers.md`), `outreach/applications.csv` (the log), and one record per application in `outreach/applications/` (the posting and every answer as sent).
 **Needs:** the user's own Chrome with the Simplify extension installed and signed in, driven by a browser agent that works inside that Chrome (for example Claude in Chrome). A separate or headless browser won't have the extension. Claude Code started by another app (an SDK or desktop host) loads its Chrome tools only when `CLAUDE_CODE_ENABLE_CFC=1` is set, for example under `env` in `~/.claude/settings.json`; in a terminal, start it with `claude --chrome`.
 
 ## Rules
@@ -101,11 +101,21 @@ One entry per question:
 - Approved free-text answers are saved by theme (why this kind of company, hardest bug, leadership example). Reuse the factual core and rewrite the company-specific sentences each time; the rewrite is a DRAFT again.
 - Re-confirm answers that go stale (start date, notice period, salary, location) if they're more than about 30 days old.
 - Keep a "Simplify misses" list of fields it gets wrong or skips repeatedly, and suggest the user add or fix them in their Simplify profile.
-- Write to the answer bank and the log after each application, not at the end of the session, so nothing is lost if the browser or session drops.
+- Write to the answer bank, the log and the application record after each application, not at the end of the session, so nothing is lost if the browser or session drops.
 - A DERIVED answer the user confirms becomes CONFIRMED.
 
 ## The log
 `outreach/applications.csv`: `date, company, role, location, url, ats, status, resume_file, new_questions, notes`. Status is one of `filled-awaiting-review`, `submitted`, `skipped` (with the reason), `blocked` (login, CAPTCHA, verification code, unsupported form). In `notes`, say exactly what the user has to do for anything not submitted. Write `submitted` only after seeing the confirmation.
+
+## The application record
+The log has one line per application and the answer bank keeps only reusable answers, so neither can show later what one company was told. Postings also get taken down or reposted under a new link within days. Before submitting (or before stopping for review), write `outreach/applications/<date>-<company>-<role-slug>.md`:
+
+- **Posting snapshot:** title, team, location and office policy, salary range, the full "what you'll do" and requirements lists, the stack named, the link, and the date read. Copy the text; don't summarize it.
+- **Fit notes:** the stack check from step 1 and any requirement the profile doesn't meet.
+- **Every question and the answer sent,** in form order, including the ones Simplify filled and the boxes ticked. Free-text answers go in word for word, not as a summary or a pointer to the answer bank.
+- **Resume file sent,** and the confirmation seen.
+
+Leave out contact details and demographic answers; write "as in the answer bank" for those. `recruiter-screen-prep` reads this file when the company replies.
 
 ## Finish
 Report: applications submitted, filled and waiting, skipped or blocked with reasons; new questions learned this session; answers still DRAFT or DERIVED; Simplify profile fixes worth making; and how many questions per application needed the user (it should fall over time).
